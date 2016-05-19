@@ -2,15 +2,12 @@ module ParentSelection (
   tournamentSelect
 ) where
 
-import qualified Data.Vector         as V
-import           Data.Vector.Unboxed as VU
-import           Prelude             as P
+import qualified Data.Vector   as V
+import           Prelude       as P
 import           System.Random
 
-import           CrowdDist
 import           Genome
 import           RandUtils
-import           RankSort
 import           SortUtils
 
 

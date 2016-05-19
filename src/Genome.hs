@@ -3,8 +3,6 @@ module Genome (
   newInd, setRankP, setCdistP, setCdistI, getFit
 ) where
 
-import           Control.Monad
-import           Control.Monad.ST
 import qualified Data.Vector         as V
 import qualified Data.Vector.Unboxed as VU
 import           System.Random
@@ -35,9 +33,9 @@ instance Show Ind where
 -- Create a new individual with a random genome.
 newInd :: (RandomGen g) => Int -> g -> (Ind, g)
 newInd n rgen =
-  (Ind (VU.fromList [-1, -1]) genome (-1) (-1), rgen')
+  (Ind (VU.fromList [-1, -1]) genom (-1) (-1), rgen')
     where
-  (genome, rgen') = randVector n rgen
+  (genom, rgen') = randVector n rgen
 
 
 setRankP :: Int -> Int -> Pool -> Pool

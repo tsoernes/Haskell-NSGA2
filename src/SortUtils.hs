@@ -31,6 +31,7 @@ indCmpFit fitIdx x y
   | a1 < b1 = LT
   | a1 > b1 = GT
   | a1 == b1 = EQ
+  | otherwise = error "Exhausted indCmpFit"
     where
   f1 = if fitIdx == 0 then 0 else 1
   f2 = if fitIdx == 0 then 1 else 0
@@ -48,6 +49,7 @@ indCmpCrowded x y
   | d1 < d2 = LT
   | d1 > d2 = GT
   | d1 == d2 = EQ
+  | otherwise = error "Exhausted indCmpCrowded"
     where
   r1 = rank x
   r2 = rank y
@@ -61,6 +63,7 @@ indCmpReverseDist x y
   | d1 > d2 = LT
   | d1 < d2 = GT
   | d1 == d2 = EQ
+  | otherwise = error "Exhausted indCmpReverseDist"
     where
   d1 = cdist x
   d2 = cdist y

@@ -7,7 +7,6 @@ import           Control.Monad.ST
 import qualified Data.Vector                 as V
 import qualified Data.Vector.Generic         as VG
 import           Data.Vector.Generic.Mutable as VGM
-import qualified Data.Vector.Mutable         as VM
 import           Data.Vector.Unboxed         as VU
 import           Data.Vector.Unboxed.Mutable as VUM
 import           Prelude                     as P
@@ -42,10 +41,10 @@ shuffle :: (RandomGen g, VG.Vector v a) => v a -> Int -> g -> (v a, g)
 shuffle li size g = runST $ do
   vector <- VG.thaw li
   let n = VGM.length vector - 1
-  let swap_random g i = do
-        let (j,g') = randomR (0,n) g
+  let swap_random g1 i = do
+        let (j,g2) = randomR (0,n) g1
         VGM.swap vector i j
-        return g'
+        return g2
   g' <- M.foldM swap_random g [0..size-1]
   v' <- VG.unsafeFreeze vector
   let vec = VG.take size v'

@@ -3,10 +3,9 @@ module GeneticOps (
 ) where
 
 import qualified Data.Vector.Generic         as VG
-import           Data.Vector.Unboxed as VU
+import qualified Data.Vector.Unboxed as VU
 import           System.Random
 
-import           Genome
 import           RandUtils
 
 

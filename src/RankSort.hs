@@ -6,7 +6,6 @@ import qualified Data.Vector         as V
 import qualified Data.Vector.Unboxed as VU
 
 import           Genome
-import           SortUtils
 
 {-
 go :: String
