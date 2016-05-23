@@ -16,7 +16,8 @@ cDistAssignFront front =
     where
   {- |Initialize all crowding distances to 0 so that they don't carry over
   from previous runs -}
-  front0d = V.map (\ind -> ind { cdist = 0 }) front
+  --front0d = V.map (\ind -> ind { cdist = 0 }) front
+  front0d = V.map ({ cdist = 0 }) front
   fit_idxs = V.enumFromN 0 (VU.length $ fitnesses $ front V.! 0) -- n. fit. objectives
 
 
