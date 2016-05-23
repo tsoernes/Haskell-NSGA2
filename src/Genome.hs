@@ -1,6 +1,6 @@
 module Genome (
   Ind(fitnesses, genome, rank, cdist), Pool, Fronts,
-  newInd, setRankP, setCdistP, setCdistI, getFit
+  newInd, setRank, setCdist, getFit
 ) where
 
 import qualified Data.Vector         as V
@@ -33,28 +33,23 @@ instance Show Ind where
 -- Create a new individual with a random genome.
 newInd :: (RandomGen g) => Int -> g -> (Ind, g)
 newInd n rgen =
-  (Ind (VU.fromList [-1, -1]) genom (-1) (-1), rgen')
+  (Ind (VU.fromList [-1, -1]) genome' (-1) (-1), rgen')
     where
-  (genom, rgen') = randVector n rgen
+  (genome', rgen') = randVector n rgen
 
 
-setRankP :: Int -> Int -> Pool -> Pool
-setRankP idx rank' pool =
+setRank :: Int -> Int -> Pool -> Pool
+setRank idx rank' pool =
   V.update pool (V.fromList [(idx, updated_ind)])
     where
   updated_ind = (pool V.! idx) { rank = rank' }
 
 
-setCdistP :: Int -> Float -> Pool -> Pool
-setCdistP idx cdist' pool =
+setCdist :: Int -> Float -> Pool -> Pool
+setCdist idx cdist' pool =
   V.update pool (V.fromList [(idx, updated_ind)])
     where
   updated_ind = (pool V.! idx) { cdist = cdist' }
-
-
-setCdistI :: Ind -> Float -> Ind
-setCdistI ind cdist' =
-  ind { cdist = cdist' }
 
 
 getFit :: Pool -> Int -> Int -> Float

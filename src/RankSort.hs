@@ -22,22 +22,12 @@ rankSort =
   V.foldl insert_ind (V.fromList [V.fromList []])
     where
   insert_ind :: Fronts -> Ind -> Fronts
-  insert_ind fronts ind = if rank' == V.length fronts
-    then V.snoc fronts (V.fromList [upd_ind])
-    else V.update fronts (V.fromList [(rank', upd_front)])
+  insert_ind fronts ind = if ind `domByFront` V.last fronts
+    then V.snoc fronts (V.fromList [ind { rank = V.length fronts }]) --new front
+    else V.update fronts (V.fromList [(ind_rank, upd_front)]) --add to existing
       where
-    upd_ind = rankIndex ind fronts
-    rank' = rank upd_ind
-    upd_front = V.snoc (fronts V.! rank') upd_ind
-
-
-{- |Take an individual and find the index of the front where it is not
-dominated by any members. This index is the rank of the individual.
-Return the individual with its rank field set. -}
-rankIndex :: Ind -> Fronts -> Ind
-rankIndex ind fronts
-  | ind `domByFront` V.last fronts = ind { rank = V.length fronts }
-  | otherwise = ind { rank = binSearch ind fronts 0 (V.length fronts - 1) }
+    ind_rank = binSearch ind fronts
+    upd_front = V.snoc (fronts V.! ind_rank) ind { rank = ind_rank }
 
 
 {- |Find the lowest index of the front where the individual can be inserted
@@ -45,13 +35,18 @@ without being dominated using binary search. The correct insertion point for an
 individual is k if if it's dominated by front (k-1) but not by front k.
 Since the each front is already sorted by fitness, it is only necessary to check
 whether or not the last individual in a front dominates the given individual.-}
-binSearch :: Ind -> Fronts -> Int -> Int -> Int
-binSearch ind_a fronts low high
-  | low == high = low
-  | V.last (fronts V.! mid) `dominates` ind_a = binSearch ind_a fronts (mid+1) high
-  | otherwise = binSearch ind_a fronts low mid
-    where
-  mid = (low+high) `div` 2
+binSearch :: Ind -> Fronts -> Int
+binSearch ind_a fronts =
+  binSearch' 0 (V.length fronts - 1)
+      where
+  binSearch' :: Int -> Int -> Int
+  binSearch' low high
+    | low == high = low
+    | ind_b `dominates` ind_a = binSearch' (mid+1) high
+    | otherwise = binSearch' low mid
+      where
+    ind_b = V.last (fronts V.! mid)
+    mid = (low+high) `div` 2
 
 
 {- |Returns True if individual x dominates individual y; False if y dominates x
@@ -62,8 +57,8 @@ dominates :: Ind -> Ind -> Bool
 ind_a `dominates` ind_b =
   strictly_better && no_worse
     where
-  strictly_better = VU.or (VU.zipWith (<) x y)
-  no_worse = VU.and (VU.zipWith (<=) x y)
+  strictly_better = VU.or $ VU.zipWith (<) x y
+  no_worse = VU.and $ VU.zipWith (<=) x y
   x = fitnesses ind_a
   y = fitnesses ind_b
 

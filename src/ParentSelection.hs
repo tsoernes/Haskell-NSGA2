@@ -8,15 +8,14 @@ import           System.Random
 
 import           Genome
 import           RandUtils
-import           SortUtils
+import           SortUtils     (indCmpCrowded)
 
 
 -- No replacement
 tournamentSelect :: (RandomGen g) => Pool -> Int -> g-> (Pool, g)
 tournamentSelect adults k g =
-  V.foldl step (V.empty, g) steps
+  V.foldl step (V.empty, g) $ V.enumFromN 0 (V.length adults)
     where
-  steps = V.enumFromN 0 (V.length adults)
   step :: (RandomGen g) => (Pool, g) -> Int -> (Pool, g)
   step (parents, g1) _ =
     (V.snoc parents winner, g2)
