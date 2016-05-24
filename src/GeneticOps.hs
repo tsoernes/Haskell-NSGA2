@@ -2,28 +2,22 @@ module GeneticOps (
   displaceMutation, orderedCrossover
 ) where
 
-import qualified Data.Vector.Generic         as VG
-import qualified Data.Vector.Unboxed as VU
+import qualified Data.Vector.Generic as VG
 import           System.Random
 
+import           Genome
 import           RandUtils
 
 
-go = do
-  g <- newStdGen
-  let genome_a = VU.fromList [1,4,5,0,2,7,3,9,6,8] :: VU.Vector Int
-      genome_b = VU.fromList [8,4,3,2,9,1,7,0,5,6] :: VU.Vector Int
-  print $ orderedCrossover genome_a genome_b g
-
-
-displaceMutation :: (VG.Vector v a, RandomGen g) => v a -> g -> (v a, g)
-displaceMutation genome rgen =
-  (mutated, rgen2)
+displaceMutation :: (RandomGen g) => Ind -> g -> (Ind, g)
+displaceMutation ind rgen =
+  (ind { genome = mutated }, rgen2)
     where
-  (i_left, i_right, rgen1) = randIndices (VG.length genome) rgen
+  genome' = genome ind
+  (i_left, i_right, rgen1) = randIndices (VG.length genome') rgen
   n = i_right - i_left
-  part = VG.slice i_left n genome
-  leftovers = VG.take i_left genome VG.++ VG.drop i_right genome
+  part = VG.slice i_left n genome'
+  leftovers = VG.take i_left genome' VG.++ VG.drop i_right genome'
   (insert_pos, _, rgen2) = randIndices (VG.length leftovers) rgen1
   mutated = VG.take insert_pos leftovers VG.++ part VG.++ VG.drop insert_pos leftovers
 
@@ -39,10 +33,12 @@ if np.random.rand() < mutation_rate:
 return genome
 -}
 
-orderedCrossover :: (VG.Vector v a, Eq a, RandomGen g) => v a -> v a -> g -> (v a, v a, g)
-orderedCrossover parent_a parent_b rgen =
-  (child_a, child_b, rgen2)
+orderedCrossover :: (RandomGen g) => Ind -> Ind -> g -> (Ind, Ind, g)
+orderedCrossover p_a p_b rgen =
+  (p_a { genome = child_a }, p_b { genome = child_b }, rgen2)
     where
+  parent_a = genome p_a
+  parent_b = genome p_b
   (p_left, p_right, rgen1) = randIndices (VG.length parent_a) rgen
   n = p_right - p_left
   c_a_mid = VG.slice p_left n parent_a

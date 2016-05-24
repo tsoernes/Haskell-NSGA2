@@ -28,7 +28,8 @@ executable nsga
         AdultSelection,
         ParentSelection,
         RandUtils,
-        Load
+        Load,
+        Population
     ghc-options: -ferror-spans -fwarn-amp -Wall
 
 test-suite test-nsga

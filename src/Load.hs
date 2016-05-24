@@ -5,22 +5,27 @@ module Load (
 import           Data.List.Split
 import qualified Data.Vector     as V
 
+
 data DSPath = DSPath
   { costP :: String
   , distP :: String
   }
+
 
 data DataSet = DataSet
   { cost :: V.Vector (V.Vector Float)
   , dist :: V.Vector (V.Vector Float)
   }
 
+
 dsPath1 = DSPath "cost.txt" "distance.txt"
 dsPath2 = DSPath "euclidA100.tsp" "euclidB100.tsp"
+
 
 go = do
   ds <- load1
   V.mapM_ print $ cost ds
+
 
 load1 :: IO DataSet
 load1 = do

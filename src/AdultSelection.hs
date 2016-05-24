@@ -1,5 +1,5 @@
 module AdultSelection (
-  aduSelectRankCdist
+  adultSelectRankCdist
 ) where
 
 import qualified Data.Vector.Generic as V
@@ -12,8 +12,8 @@ import           SortUtils
 
 {- |Select adults from a combined pool of the children and adults from the
 previous generation based on firstly on rank and then crowding distance.-}
-aduSelectRankCdist :: Pool -> Pool -> Pool
-aduSelectRankCdist children adults =
+adultSelectRankCdist :: Pool -> Pool -> Pool
+adultSelectRankCdist children adults =
   rank_pool V.++ crowd_pool
     where
   fronts = rankSort (children V.++ adults)
