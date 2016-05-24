@@ -10,7 +10,7 @@ import           Data.Vector.Generic.Mutable as VGM
 import qualified Data.Vector.Unboxed         as VU
 import           Data.Vector.Unboxed.Mutable as VUM
 import           System.Random
-
+{-
 go :: IO()
 go = do
   g <- newStdGen
@@ -18,7 +18,7 @@ go = do
   let (rand_vec, g2) = randVector 10 g1
   print rand_vecs
   print rand_vec
-
+-}
 --foldl :: (a -> b -> a) -> a -> Vector b -> a
 --prescanl :: (a -> b -> a) -> a -> Vector b -> Vector a
 --scanl :: (a -> b -> a) -> a -> Vector b -> Vector a

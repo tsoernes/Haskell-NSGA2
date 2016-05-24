@@ -4,13 +4,11 @@ module Population (
 
 import qualified Data.Vector         as V
 import qualified Data.Vector.Unboxed as VU
+import           System.Random
 
 import           Genome
+import           Load
 import           SortUtils
-
-
-type DataSet =
-  (VU.Vector Int, VU.Vector Int)
 
 
 data EAProblem = EAProblem
@@ -18,12 +16,12 @@ data EAProblem = EAProblem
     , popSize       :: Int
     , nCities       :: Int
     , tournSize     :: Int
-    , mutationRate  :: Int
-    , crossoverRate :: Int}
+    , mutationRate  :: Float
+    , crossoverRate :: Float}
 
 
-eaRunner :: EAProblem -> DataSet -> Pool
-eaRunner = undefined
+eaRunner :: (RandomGen g) => DataSet -> EAProblem -> g -> Pool
+eaRunner ds eap g = undefined
 {-
 while population.generation < problem.generation_limit:
   population.generation += 1
@@ -37,8 +35,8 @@ while population.generation < problem.generation_limit:
 -}
 
 
-reproduce :: Pool -> Pool
-reproduce = undefined
+reproduce :: (RandomGen g) => Pool -> EAProblem -> g -> Pool
+reproduce children eap g = undefined
 {-
 def reproduce(self):
         """
@@ -52,20 +50,13 @@ def reproduce(self):
 -}
 
 
-evalFitness :: Ind -> DataSet -> Ind
-evalFitness = undefined
-{-
-def evaluate_fitness(self, child):
-        total_distance = 0
-        total_cost = 0
-        for i in range(self.n_cities-1):
-            city_a = child.genotype[i]
-            city_b = child.genotype[i+1]
-            #  The cost of travelling from a to b is equal to the cost of travelling from b to a
-            total_distance += self.distances[city_a][city_b]
-            total_cost += self.costs[city_a][city_b]
-
-        child.fitnesses[0] = total_distance
-        child.fitnesses[1] = total_cost
-
--}
+evalFitnesses :: Pool -> DataSet -> Pool
+evalFitnesses children ds =
+  V.map evalFit children
+    where
+  evalFit ind = ind { fitnesses = VU.fromList [totDist, totCost] }
+      where
+    totDist = VU.foldl d 0 (VU.tail $ genome ind)
+    totCost = VU.foldl c 0 (VU.tail $ genome ind)
+    d acc idx = acc + ((dist ds V.! (idx-1)) V.! idx)
+    c acc idx = acc + ((cost ds V.! (idx-1)) V.! idx)
