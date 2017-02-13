@@ -20,15 +20,20 @@ module Main (
 import           System.Random
 
 import           Genome
-import           Load
+import           Load          (load1)
 import           Population
 
 main :: IO ()
 main = do
   g <- getStdGen
-  let ds = load1
+  ds <- load1
+  let
       eap = eaPreset1
-  eaRunner ds eap g
+      (c, a, _) = eaRunner ds eap g
+  print $ showFits c
+  print $ showFits a
+  print $ showRanks c
+  print $ showRanks a
 
 
 eaPreset1 :: EAProblem
@@ -39,4 +44,4 @@ eaPreset1 = EAProblem
   , tournSize     = 2
   , mutationRate  = 0.05
   , crossoverRate = 0.80
-}
+  }

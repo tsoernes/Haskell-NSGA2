@@ -1,5 +1,6 @@
 module Population (
-  eaRunner
+  eaRunner,
+  EAProblem(..)
 ) where
 
 import qualified Data.Vector         as V
@@ -19,21 +20,24 @@ data EAProblem = EAProblem
     , nCities       :: Int
     , tournSize     :: Int
     , mutationRate  :: Float
-    , crossoverRate :: Float}
+    , crossoverRate :: Float
+    }
 
 
-eaRunner :: (RandomGen g) => DataSet -> EAProblem -> g -> (Pool, g)
+eaRunner :: (RandomGen g) => DataSet -> EAProblem -> g -> (Pool, Pool, g)
 eaRunner ds eap g =
-  V.foldl runGen (children, V.empty, g1) $ V.enumFromN 0 (nGenerations eap)
+  runGen (children, V.empty, g1) (nGenerations eap)
     where
-  (children, g1) = newPool popSize eap nCities eap g
+  (children, g1) = newPool (popSize eap) (nCities eap) g
   runGen :: (RandomGen g) => (Pool, Pool, g) -> Int -> (Pool, Pool, g)
-  runGen (children, adults, g1) _ =
-    (children', adults', g3)
+  runGen res 0 = res
+  runGen (children', adults, g2) gen =
+    runGen (newChildren, newAdults, g4) (gen-1)
       where
-    (parents, g2) = tournamentSelect adults' (tournSize eap) g1
-    adults' = adultSelectRankCdist children adults
-    children' = reproduce parents eap g2
+    childrenE = evalFitnesses children' ds
+    newAdults = adultSelectRankCdist childrenE adults
+    (newParents, g3) = tournamentSelect newAdults (tournSize eap) g2
+    (newChildren, g4) = reproduce newParents eap g3
 
 
 reproduce :: (RandomGen g) => Pool -> EAProblem -> g -> (Pool, g)
@@ -66,7 +70,8 @@ evalFitnesses children ds =
     where
   evalFit ind = ind { fitnesses = VU.fromList [totDist, totCost] }
       where
-    totDist = VU.foldl d 0 (VU.tail $ genome ind)
-    totCost = VU.foldl c 0 (VU.tail $ genome ind)
-    d acc idx = acc + ((dist ds V.! (idx-1)) V.! idx)
-    c acc idx = acc + ((cost ds V.! (idx-1)) V.! idx)
+    neighbors = VU.zip (VU.init $ genome ind) (VU.tail $ genome ind)
+    totDist = VU.foldr' d 0 neighbors
+    totCost = VU.foldr' c 0 neighbors
+    d (a,b) acc = acc + ((dist ds V.! a) V.! b)
+    c (a,b) acc = acc + ((cost ds V.! a) V.! b)

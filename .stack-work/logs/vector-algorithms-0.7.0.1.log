@@ -1,0 +1,26 @@
+Configuring vector-algorithms-0.7.0.1...
+Building vector-algorithms-0.7.0.1...
+Preprocessing library vector-algorithms-0.7.0.1...
+[ 1 of 10] Compiling Data.Vector.Algorithms.Common ( src\Data\Vector\Algorithms\Common.hs, .stack-work\dist\b7fec021\build\Data\Vector\Algorithms\Common.o )
+[ 2 of 10] Compiling Data.Vector.Algorithms.Search ( src\Data\Vector\Algorithms\Search.hs, .stack-work\dist\b7fec021\build\Data\Vector\Algorithms\Search.o )
+[ 3 of 10] Compiling Data.Vector.Algorithms.Radix ( src\Data\Vector\Algorithms\Radix.hs, .stack-work\dist\b7fec021\build\Data\Vector\Algorithms\Radix.o )
+[ 4 of 10] Compiling Data.Vector.Algorithms.Optimal ( src\Data\Vector\Algorithms\Optimal.hs, .stack-work\dist\b7fec021\build\Data\Vector\Algorithms\Optimal.o )
+[ 5 of 10] Compiling Data.Vector.Algorithms.Insertion ( src\Data\Vector\Algorithms\Insertion.hs, .stack-work\dist\b7fec021\build\Data\Vector\Algorithms\Insertion.o )
+[ 6 of 10] Compiling Data.Vector.Algorithms.AmericanFlag ( src\Data\Vector\Algorithms\AmericanFlag.hs, .stack-work\dist\b7fec021\build\Data\Vector\Algorithms\AmericanFlag.o )
+[ 7 of 10] Compiling Data.Vector.Algorithms.Tim ( src\Data\Vector\Algorithms\Tim.hs, .stack-work\dist\b7fec021\build\Data\Vector\Algorithms\Tim.o )
+[ 8 of 10] Compiling Data.Vector.Algorithms.Merge ( src\Data\Vector\Algorithms\Merge.hs, .stack-work\dist\b7fec021\build\Data\Vector\Algorithms\Merge.o )
+[ 9 of 10] Compiling Data.Vector.Algorithms.Heap ( src\Data\Vector\Algorithms\Heap.hs, .stack-work\dist\b7fec021\build\Data\Vector\Algorithms\Heap.o )
+[10 of 10] Compiling Data.Vector.Algorithms.Intro ( src\Data\Vector\Algorithms\Intro.hs, .stack-work\dist\b7fec021\build\Data\Vector\Algorithms\Intro.o )
+[ 1 of 10] Compiling Data.Vector.Algorithms.Common ( src\Data\Vector\Algorithms\Common.hs, .stack-work\dist\b7fec021\build\Data\Vector\Algorithms\Common.p_o )
+[ 2 of 10] Compiling Data.Vector.Algorithms.Search ( src\Data\Vector\Algorithms\Search.hs, .stack-work\dist\b7fec021\build\Data\Vector\Algorithms\Search.p_o )
+[ 3 of 10] Compiling Data.Vector.Algorithms.Radix ( src\Data\Vector\Algorithms\Radix.hs, .stack-work\dist\b7fec021\build\Data\Vector\Algorithms\Radix.p_o )
+[ 4 of 10] Compiling Data.Vector.Algorithms.Optimal ( src\Data\Vector\Algorithms\Optimal.hs, .stack-work\dist\b7fec021\build\Data\Vector\Algorithms\Optimal.p_o )
+[ 5 of 10] Compiling Data.Vector.Algorithms.Insertion ( src\Data\Vector\Algorithms\Insertion.hs, .stack-work\dist\b7fec021\build\Data\Vector\Algorithms\Insertion.p_o )
+[ 6 of 10] Compiling Data.Vector.Algorithms.AmericanFlag ( src\Data\Vector\Algorithms\AmericanFlag.hs, .stack-work\dist\b7fec021\build\Data\Vector\Algorithms\AmericanFlag.p_o )
+[ 7 of 10] Compiling Data.Vector.Algorithms.Tim ( src\Data\Vector\Algorithms\Tim.hs, .stack-work\dist\b7fec021\build\Data\Vector\Algorithms\Tim.p_o )
+[ 8 of 10] Compiling Data.Vector.Algorithms.Merge ( src\Data\Vector\Algorithms\Merge.hs, .stack-work\dist\b7fec021\build\Data\Vector\Algorithms\Merge.p_o )
+[ 9 of 10] Compiling Data.Vector.Algorithms.Heap ( src\Data\Vector\Algorithms\Heap.hs, .stack-work\dist\b7fec021\build\Data\Vector\Algorithms\Heap.p_o )
+[10 of 10] Compiling Data.Vector.Algorithms.Intro ( src\Data\Vector\Algorithms\Intro.hs, .stack-work\dist\b7fec021\build\Data\Vector\Algorithms\Intro.p_o )
+Installing library in
+C:\sr\snapshots\4a5d830b\lib\x86_64-windows-ghc-8.0.1\vector-algorithms-0.7.0.1-8R8UpWgvBC926XMxBjYPpx
+Registering vector-algorithms-0.7.0.1...

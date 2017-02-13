@@ -2,6 +2,7 @@ module ParentSelection (
   tournamentSelect
 ) where
 
+
 import qualified Data.Vector   as V
 import           Prelude       as P
 import           System.Random

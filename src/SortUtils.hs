@@ -10,10 +10,12 @@ import qualified Data.Vector.Unboxed        as VU
 import           Genome
 
 
+-- Compare two individuals
 type IndCmp =
   Ind -> Ind -> Ordering
 
 
+-- Sort a pool of individuals with the given comparator
 sortPool :: Pool-> IndCmp -> Pool
 sortPool pool cmp =
   runST $ do
@@ -22,8 +24,8 @@ sortPool pool cmp =
     V.unsafeFreeze v
 
 
--- Comparator to sort a list of individuals by increasing order of fitIdx and
--- for individuals with equal fitIdx, with increasing order of the other fitness
+-- Compare two individuals each with two fitnesses by increasing order of fitIdx
+-- and for individuals with equal fitIdx, with increasing order of the other fitness
 indCmpFit :: Int -> IndCmp
 indCmpFit fitIdx x y
   | a0 < b0 = LT
@@ -33,12 +35,12 @@ indCmpFit fitIdx x y
   | a1 == b1 = EQ
   | otherwise = error "Exhausted indCmpFit"
     where
-  f1 = if fitIdx == 0 then 0 else 1
-  f2 = if fitIdx == 0 then 1 else 0
   a0 = fitnesses x VU.! f1
   a1 = fitnesses x VU.! f2
   b0 = fitnesses y VU.! f1
   b1 = fitnesses y VU.! f2
+  f1 = if fitIdx == 0 then 0 else 1
+  f2 = if fitIdx == 0 then 1 else 0
 
 
 -- The 'crowded comparison' operator

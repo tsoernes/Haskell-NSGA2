@@ -18,11 +18,13 @@ data DataSet = DataSet
   }
 
 
+dsPath1 :: DSPath
 dsPath1 = DSPath "cost.txt" "distance.txt"
+dsPath2 :: DSPath
 dsPath2 = DSPath "euclidA100.tsp" "euclidB100.tsp"
 
-
-go = do
+test :: IO()
+test = do
   ds <- load1
   V.mapM_ print $ cost ds
 
@@ -44,7 +46,7 @@ format li =
   asvec = V.fromList $ map V.fromList asint
 
 
--- Mirror diagonally bottom left to top right
+-- Mirror bottom left diagonal half to top right
 mirror :: V.Vector (V.Vector a) -> V.Vector (V.Vector a)
 mirror li =
   V.imap (\idx subli -> V.update subli $ idxs V.! idx) li

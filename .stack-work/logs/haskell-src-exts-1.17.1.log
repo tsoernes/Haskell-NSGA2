@@ -1,0 +1,113 @@
+Configuring haskell-src-exts-1.17.1...
+Building haskell-src-exts-1.17.1...
+Preprocessing library haskell-src-exts-1.17.1...
+unused rules: 3
+[ 1 of 24] Compiling Language.Haskell.Exts.Annotated.Syntax ( src\Language\Haskell\Exts\Annotated\Syntax.hs, .stack-work\dist\b7fec021\build\Language\Haskell\Exts\Annotated\Syntax.o )
+[ 2 of 24] Compiling Language.Haskell.Exts.ParseSyntax ( src\Language\Haskell\Exts\ParseSyntax.hs, .stack-work\dist\b7fec021\build\Language\Haskell\Exts\ParseSyntax.o )
+[ 3 of 24] Compiling Language.Haskell.Exts.Annotated.Build ( src\Language\Haskell\Exts\Annotated\Build.hs, .stack-work\dist\b7fec021\build\Language\Haskell\Exts\Annotated\Build.o )
+[ 4 of 24] Compiling Language.Haskell.Exts.SrcLoc ( src\Language\Haskell\Exts\SrcLoc.hs, .stack-work\dist\b7fec021\build\Language\Haskell\Exts\SrcLoc.o )
+[ 5 of 24] Compiling Language.Haskell.Exts.Comments ( src\Language\Haskell\Exts\Comments.hs, .stack-work\dist\b7fec021\build\Language\Haskell\Exts\Comments.o )
+[ 6 of 24] Compiling Language.Haskell.Exts.Annotated.ExactPrint ( src\Language\Haskell\Exts\Annotated\ExactPrint.hs, .stack-work\dist\b7fec021\build\Language\Haskell\Exts\Annotated\ExactPrint.o )
+
+src\Language\Haskell\Exts\Annotated\ExactPrint.hs:153:1: warning: [-Wredundant-constraints]
+    * Redundant constraint: Annotated ast
+    * In the type signature for:
+           printInterleaved :: (Annotated ast, ExactP ast, SrcInfo loc) =>
+                               [(loc, String)] -> [ast SrcSpanInfo] -> EP ()
+
+src\Language\Haskell\Exts\Annotated\ExactPrint.hs:153:1: warning: [-Wredundant-constraints]
+    * Redundant constraint: Annotated ast
+    * In the type signature for:
+           printInterleaved' :: (Annotated ast, ExactP ast, SrcInfo loc) =>
+                                [(loc, String)] -> [ast SrcSpanInfo] -> EP ()
+
+src\Language\Haskell\Exts\Annotated\ExactPrint.hs:177:1: warning: [-Wredundant-constraints]
+    * Redundant constraint: Annotated ast
+    * In the type signature for:
+           bracketList :: (Annotated ast, ExactP ast) =>
+                          (String, String, String) -> [SrcSpan] -> [ast SrcSpanInfo] -> EP ()
+
+src\Language\Haskell\Exts\Annotated\ExactPrint.hs:188:1: warning: [-Wredundant-constraints]
+    * Redundant constraint: Annotated ast
+    * In the type signature for:
+           parenList :: (Annotated ast, ExactP ast) =>
+                        [SrcSpan] -> [ast SrcSpanInfo] -> EP ()
+
+src\Language\Haskell\Exts\Annotated\ExactPrint.hs:188:1: warning: [-Wredundant-constraints]
+    * Redundant constraint: Annotated ast
+    * In the type signature for:
+           squareList :: (Annotated ast, ExactP ast) =>
+                         [SrcSpan] -> [ast SrcSpanInfo] -> EP ()
+
+src\Language\Haskell\Exts\Annotated\ExactPrint.hs:188:1: warning: [-Wredundant-constraints]
+    * Redundant constraint: Annotated ast
+    * In the type signature for:
+           squareColonList :: (Annotated ast, ExactP ast) =>
+                              [SrcSpan] -> [ast SrcSpanInfo] -> EP ()
+
+src\Language\Haskell\Exts\Annotated\ExactPrint.hs:188:1: warning: [-Wredundant-constraints]
+    * Redundant constraint: Annotated ast
+    * In the type signature for:
+           curlyList :: (Annotated ast, ExactP ast) =>
+                        [SrcSpan] -> [ast SrcSpanInfo] -> EP ()
+
+src\Language\Haskell\Exts\Annotated\ExactPrint.hs:188:1: warning: [-Wredundant-constraints]
+    * Redundant constraint: Annotated ast
+    * In the type signature for:
+           parenHashList :: (Annotated ast, ExactP ast) =>
+                            [SrcSpan] -> [ast SrcSpanInfo] -> EP ()
+
+src\Language\Haskell\Exts\Annotated\ExactPrint.hs:195:1: warning: [-Wredundant-constraints]
+    * Redundant constraints: (Functor ast,
+                              Show (ast ()),
+                              Annotated ast)
+    * In the type signature for:
+           layoutList :: (Functor ast, Show (ast ()), Annotated ast,
+                          ExactP ast) =>
+                         [SrcSpan] -> [ast SrcSpanInfo] -> EP ()
+[ 7 of 24] Compiling Language.Haskell.Exts.Annotated.Comments ( src\Language\Haskell\Exts\Annotated\Comments.hs, .stack-work\dist\b7fec021\build\Language\Haskell\Exts\Annotated\Comments.o )
+[ 8 of 24] Compiling Language.Haskell.Exts.Extension ( src\Language\Haskell\Exts\Extension.hs, .stack-work\dist\b7fec021\build\Language\Haskell\Exts\Extension.o )
+[ 9 of 24] Compiling Language.Haskell.Exts.ExtScheme ( src\Language\Haskell\Exts\ExtScheme.hs, .stack-work\dist\b7fec021\build\Language\Haskell\Exts\ExtScheme.o )
+[10 of 24] Compiling Language.Haskell.Exts.Syntax ( src\Language\Haskell\Exts\Syntax.hs, .stack-work\dist\b7fec021\build\Language\Haskell\Exts\Syntax.o )
+[11 of 24] Compiling Language.Haskell.Exts.Build ( src\Language\Haskell\Exts\Build.hs, .stack-work\dist\b7fec021\build\Language\Haskell\Exts\Build.o )
+[12 of 24] Compiling Language.Haskell.Exts.Fixity ( src\Language\Haskell\Exts\Fixity.hs, .stack-work\dist\b7fec021\build\Language\Haskell\Exts\Fixity.o )
+[13 of 24] Compiling Language.Haskell.Exts.ParseMonad ( src\Language\Haskell\Exts\ParseMonad.hs, .stack-work\dist\b7fec021\build\Language\Haskell\Exts\ParseMonad.o )
+
+src\Language\Haskell\Exts\ParseMonad.hs:45:1: warning: [-Wunused-imports]
+    The import of `Control.Applicative' is redundant
+      except perhaps to import instances from `Control.Applicative'
+    To import instances alone, use: import Control.Applicative()
+
+src\Language\Haskell\Exts\ParseMonad.hs:47:1: warning: [-Wunused-imports]
+    The import of `Data.Monoid' is redundant
+      except perhaps to import instances from `Data.Monoid'
+    To import instances alone, use: import Data.Monoid()
+[14 of 24] Compiling Language.Haskell.Exts.InternalLexer ( src\Language\Haskell\Exts\InternalLexer.hs, .stack-work\dist\b7fec021\build\Language\Haskell\Exts\InternalLexer.o )
+[15 of 24] Compiling Language.Haskell.Exts.Lexer ( src\Language\Haskell\Exts\Lexer.hs, .stack-work\dist\b7fec021\build\Language\Haskell\Exts\Lexer.o )
+[16 of 24] Compiling Language.Haskell.Exts.Annotated.Simplify ( src\Language\Haskell\Exts\Annotated\Simplify.hs, .stack-work\dist\b7fec021\build\Language\Haskell\Exts\Annotated\Simplify.o )
+
+src\Language\Haskell\Exts\Annotated\Simplify.hs:326:1: warning: [-Wredundant-constraints]
+    * Redundant constraint: SrcInfo l
+    * In the type signature for:
+           sBangType :: SrcInfo l => BangType l -> S.BangType
+
+src\Language\Haskell\Exts\Annotated\Simplify.hs:514:1: warning: [-Wredundant-constraints]
+    * Redundant constraint: SrcInfo loc
+    * In the type signature for:
+           sOverlap :: SrcInfo loc => Overlap loc -> S.Overlap
+[17 of 24] Compiling Language.Haskell.Exts.Pretty ( src\Language\Haskell\Exts\Pretty.hs, .stack-work\dist\b7fec021\build\Language\Haskell\Exts\Pretty.o )
+[18 of 24] Compiling Language.Haskell.Exts.ParseUtils ( src\Language\Haskell\Exts\ParseUtils.hs, .stack-work\dist\b7fec021\build\Language\Haskell\Exts\ParseUtils.o )
+
+src\Language\Haskell\Exts\ParseUtils.hs:1137:1: warning: [-Wredundant-constraints]
+    * Redundant constraint: Show l
+    * In the type signature for:
+           checkKind :: Show l => Kind l -> P ()
+[19 of 24] Compiling Language.Haskell.Exts.Annotated.Fixity ( src\Language\Haskell\Exts\Annotated\Fixity.hs, .stack-work\dist\b7fec021\build\Language\Haskell\Exts\Annotated\Fixity.o )
+[20 of 24] Compiling Language.Haskell.Exts.InternalParser ( .stack-work\dist\b7fec021\build\Language\Haskell\Exts\InternalParser.hs, .stack-work\dist\b7fec021\build\Language\Haskell\Exts\InternalParser.o )
+[21 of 24] Compiling Language.Haskell.Exts.Annotated.Parser ( src\Language\Haskell\Exts\Annotated\Parser.hs, .stack-work\dist\b7fec021\build\Language\Haskell\Exts\Annotated\Parser.o )
+[22 of 24] Compiling Language.Haskell.Exts.Parser ( src\Language\Haskell\Exts\Parser.hs, .stack-work\dist\b7fec021\build\Language\Haskell\Exts\Parser.o )
+[23 of 24] Compiling Language.Haskell.Exts.Annotated ( src\Language\Haskell\Exts\Annotated.hs, .stack-work\dist\b7fec021\build\Language\Haskell\Exts\Annotated.o )
+[24 of 24] Compiling Language.Haskell.Exts ( src\Language\Haskell\Exts.hs, .stack-work\dist\b7fec021\build\Language\Haskell\Exts.o )
+Installing library in
+C:\Users\Torstein\AppData\Roaming\stack\snapshots\c55a78fb\lib\x86_64-windows-ghc-8.0.1\haskell-src-exts-1.17.1-6G3hSTJXLEu8noQY4a7Epo
+Registering haskell-src-exts-1.17.1...

@@ -8,15 +8,17 @@ executable nsga
     main-is: Main.hs
     build-depends:
         QuickCheck -any,
+        HUnit -any,
         base -any,
         doctest -any,
         vector -any,
         vector-algorithms -any,
-        fixed-vector -any,
         random -any,
         transformers -any,
         mwc-random -any,
-        split -any
+        split -any,
+        mtl,
+        MonadRandom >= 0.4.2.3
     default-language: Haskell2010
     hs-source-dirs: src
     other-modules:
@@ -29,17 +31,35 @@ executable nsga
         ParentSelection,
         RandUtils,
         Load,
-        Population
-    ghc-options: -ferror-spans -fwarn-amp -Wall
+        Population,
+
+        Rubbish,
+        Test
+    ghc-options: -ferror-spans -Wall -fno-warn-unused-binds -fno-warn-unused-matches -Wunused-top-binds -g
 
 test-suite test-nsga
     type: exitcode-stdio-1.0
-    main-is: Main.hs
+    main-is: TestMain.hs
     build-depends:
         QuickCheck -any,
         base -any,
         doctest -any,
-        vector -any
+        vector -any,
+        random -any,
+        HUnit -any,
+        test-framework -any,
+        test-framework-hunit -any
     default-language: Haskell2010
-    hs-source-dirs: test
+    hs-source-dirs: test, src
+    other-modules:
+        TestRankSort,
+        TestGenome,
+        TestGeneticOps,
+        TestCrowdDist,
+        TestSortUtils,
+        TestAdultSelection,
+        TestParentSelection,
+        TestRandUtils,
+        TestLoad,
+        TestPopulation
     ghc-options: -ferror-spans

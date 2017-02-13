@@ -1,39 +1,42 @@
-module Genome (
-  Ind(fitnesses, genome, rank, cdist), Pool, Fronts,
-  newInd, setRank, setCdist, getFit
-) where
+module Genome where
 
-import qualified Data.Vector         as V
-import qualified Data.Vector.Unboxed as VU
-import           System.Random
-
+import           Control.Monad.Random
+import qualified Data.Vector          as V
+import qualified Data.Vector.Unboxed  as VU
 import           RandUtils
-
 
 data Ind = Ind
     { fitnesses :: VU.Vector Float
     , genome    :: VU.Vector Int
     , rank      :: Int
-    , cdist     :: Float
+    , cdist     :: Float -- crowding distance
     }
+
+defaultFits :: VU.Vector Float
+defaultFits = VU.fromList [-1.0, -1.0]
+defaultRank :: Int
+defaultRank = -1
+defaultCdist :: Float
+defaultCdist = -1.0
 
 
 type Pool =
   V.Vector Ind
-
 
 type Fronts =
   V.Vector Pool
 
 
 instance Show Ind where
-   show Ind{ fitnesses = f, rank = r, genome = g } = show f ++ "r" ++ show r ++ show g
+   show Ind{ fitnesses = f
+           , rank = r
+           , genome = g
+           } = "f" ++ show f ++ "r" ++ show r ++ "g" ++ show g ++ " "
 
 
-go :: IO()
-go = do
-  g <- newStdGen
-  let (p, _) = newPool 5 10 g
+test :: IO()
+test = do
+  p <- evalRandIO (newPool 5 10)
   print $ showGenomes p
 
 
@@ -52,31 +55,30 @@ showGenomes =
   V.foldl1 (++) . V.map (show . genome)
 
 
--- Create a new pool with @n_inds@ individual with random genomes of length
--- @l_genome@
-newPool :: (RandomGen g) => Int -> Int -> g -> (Pool, g)
-newPool n_inds l_genome g =
-  V.foldl add (V.empty, g) (V.enumFromN 0 n_inds)
-    where
-  add :: (RandomGen g) => (Pool, g) -> Int -> (Pool, g)
-  add (pool, g') _ =
-    (V.snoc pool ind, g'')
-      where
-    (ind, g'') = newInd l_genome g'
+-- Create a new pool with @nInds@ individuals with random genomes of length
+-- @genomeLen@
+newPool :: (MonadRandom m) => Int -> Int -> m Pool
+newPool nInds genomeLen = V.replicateM nInds (newInd genomeLen)
 
 
--- Create a new individual with a random genome of length @l_genome@
-newInd :: (RandomGen g) => Int -> g -> (Ind, g)
-newInd l_genome g =
-  (Ind (VU.fromList [-1, -1]) genome' (-1) (-1), g')
-    where
-  (genome', g') = randVector l_genome g
+-- Create a new individual with a random genome of length @genomeLen@ and other
+-- values set to defaults
+newInd :: (MonadRandom m) => Int -> m Ind
+newInd genomeLen = do
+  genome' <- randVector genomeLen
+  return (Ind defaultFits genome' defaultRank defaultCdist)
 
 
-  -- Set rank of an individual and return the pool with the updated
-  -- individual
-setRank :: Int -> Int -> Pool -> Pool
-setRank idx rank' pool =
+-- Set rank of an individual and return the pool with the updated individual
+setRank :: (MonadRandom m) => Int -> Int -> m Pool -> m Pool
+setRank idx rank' pool = do
+  p <- pool
+  let updated_ind = (p V.! idx) { rank = rank' }
+      np = V.update p (V.fromList [(idx, updated_ind)])
+  return np
+
+setRank' :: Int -> Int -> Pool -> Pool
+setRank' idx rank' pool = do
   V.update pool (V.fromList [(idx, updated_ind)])
     where
   updated_ind = (pool V.! idx) { rank = rank' }
