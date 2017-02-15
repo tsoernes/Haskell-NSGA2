@@ -23,24 +23,6 @@ data EAProblem = EAProblem
     , crossoverRate :: Float
     }
 
- {-
---eaRunner' :: (MonadRandom m) => DataSet -> EAProblem -> m (Pool, Pool)
-eaRunner' :: DataSet -> EAProblem -> (Pool, Pool)
-eaRunner ds eap =
-  runGen (children, V.empty) (nGenerations eap)
-    where
-  (children) = newPool (popSize eap) (nCities eap)
-  --runGen :: (MonadRandom m) => (Pool, Pool) -> Int -> m (Pool, Pool)
-  runGen :: (Pool, Pool) -> Int -> (Pool, Pool)
-  runGen res 0 = res
-  runGen (children', adults) gen =
-    runGen (newChildren, newAdults) (gen-1)
-      where
-    childrenE = evalFitnesses children' ds
-    newAdults = adultSelectRankCdist childrenE adults
-    (newParents) = tournamentSelect newAdults (tournSize eap)
-    (newChildren) = reproduce newParents eap
--}
 
 -- Evaluate fitnesses ->
 -- Select adults ->
@@ -59,7 +41,7 @@ eaRunner ds eap = do
         newChildren <- reproduce newParents eap
         return (newChildren, newAdults)
 
-  return $ foldM runGen (initPool, V.empty) [0..(nGenerations eap)]
+  foldM runGen (initPool, V.empty) [0..(nGenerations eap)]
 
 
 reproduce :: (MonadRandom m) => Pool -> EAProblem -> m Pool
