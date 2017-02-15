@@ -1,5 +1,5 @@
 module Load (
-  load1, DataSet (cost, dist)
+  loadDS, DataSet (cost, dist)
 ) where
 
 import           Data.List.Split
@@ -23,14 +23,14 @@ dsPath1 = DSPath "cost.txt" "distance.txt"
 dsPath2 :: DSPath
 dsPath2 = DSPath "euclidA100.tsp" "euclidB100.tsp"
 
-test :: IO()
+test :: IO ()
 test = do
-  ds <- load1
+  ds <- loadDS
   V.mapM_ print $ cost ds
 
 
-load1 :: IO DataSet
-load1 = do
+loadDS :: IO DataSet
+loadDS = do
   cost' <- readFile $ costP dsPath1
   dist' <- readFile $ distP dsPath1
   return $ DataSet (format cost') (format dist')

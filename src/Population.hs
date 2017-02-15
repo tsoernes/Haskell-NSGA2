@@ -3,11 +3,11 @@ module Population (
   EAProblem(..)
 ) where
 
-import qualified Data.Vector         as V
-import qualified Data.Vector.Unboxed as VU
-import           System.Random
-
 import           AdultSelection
+import           Control.Monad
+import           Control.Monad.Random
+import qualified Data.Vector          as V
+import qualified Data.Vector.Unboxed  as VU
 import           GeneticOps
 import           Genome
 import           Load
@@ -23,45 +23,81 @@ data EAProblem = EAProblem
     , crossoverRate :: Float
     }
 
-
-eaRunner :: (RandomGen g) => DataSet -> EAProblem -> g -> (Pool, Pool, g)
-eaRunner ds eap g =
-  runGen (children, V.empty, g1) (nGenerations eap)
+ {-
+--eaRunner' :: (MonadRandom m) => DataSet -> EAProblem -> m (Pool, Pool)
+eaRunner' :: DataSet -> EAProblem -> (Pool, Pool)
+eaRunner ds eap =
+  runGen (children, V.empty) (nGenerations eap)
     where
-  (children, g1) = newPool (popSize eap) (nCities eap) g
-  runGen :: (RandomGen g) => (Pool, Pool, g) -> Int -> (Pool, Pool, g)
+  (children) = newPool (popSize eap) (nCities eap)
+  --runGen :: (MonadRandom m) => (Pool, Pool) -> Int -> m (Pool, Pool)
+  runGen :: (Pool, Pool) -> Int -> (Pool, Pool)
   runGen res 0 = res
-  runGen (children', adults, g2) gen =
-    runGen (newChildren, newAdults, g4) (gen-1)
+  runGen (children', adults) gen =
+    runGen (newChildren, newAdults) (gen-1)
       where
     childrenE = evalFitnesses children' ds
     newAdults = adultSelectRankCdist childrenE adults
-    (newParents, g3) = tournamentSelect newAdults (tournSize eap) g2
-    (newChildren, g4) = reproduce newParents eap g3
+    (newParents) = tournamentSelect newAdults (tournSize eap)
+    (newChildren) = reproduce newParents eap
+-}
 
+-- Evaluate fitnesses ->
+-- Select adults ->
+-- Select parents ->
+-- Reproduce ->
+-- Repeat
+eaRunner :: (MonadRandom m) => DataSet -> EAProblem -> m (Pool, Pool)
+eaRunner ds eap = do
+  initPool <- newPool (popSize eap) (nCities eap)
+  -- | Run through one generation, generating/selecting new children and new adults
+  let runGen :: (MonadRandom m) => (Pool, Pool) -> Int -> m (Pool, Pool)
+      runGen (children, adults) _ = do
+        let children' = evalFitnesses children ds
+            newAdults = adultSelectRankCdist children' adults
+        newParents <- tournamentSelect newAdults (tournSize eap)
+        newChildren <- reproduce newParents eap
+        return (newChildren, newAdults)
 
-reproduce :: (RandomGen g) => Pool -> EAProblem -> g -> (Pool, g)
-reproduce parents eap g =
-  V.foldl mate (V.empty, g) $ V.zip (V.take half parents) (V.drop half parents)
+  return $ foldM runGen (initPool, V.empty) [0..(nGenerations eap)]
+{-
+reproduce' :: (MonadRandom m) => Pool -> EAProblem -> m Pool
+reproduce' parents eap =
+  V.foldl mate V.empty $ V.zip (V.take half parents) (V.drop half parents)
     where
   half = V.length parents `div` 2
-  mate :: (RandomGen g) => (Pool, g) -> (Ind, Ind) -> (Pool, g)
-  mate (children, g1) (a, b) =
-    (children V.++ cs, g7)
+  mate :: (MonadRandom m) => (Ind, Ind) -> m Pool
+  mate (a, b) =
       where
-    (c_chance, g2) = randomR (0::Float,1) g1
-    (m1_chance, g3) = randomR (0::Float,1) g2
-    (m2_chance, g4) = randomR (0::Float,1) g3
-    (ac, bc, g5) = if c_chance < crossoverRate eap
-      then orderedCrossover a b g4
-      else (a, b, g4)
-    (am, g6) = if m1_chance < mutationRate eap
-      then displaceMutation ac g5
-      else (ac, g5)
-    (bm, g7) = if m2_chance < mutationRate eap
-      then displaceMutation bc g6
-      else (bc, g6)
+    [c_chance, m1_chance, m2_chance] <- take 3 getRandoms
+    (ac, bc) = if c_chance < crossoverRate eap
+      then orderedCrossover a b
+      else (a, b)
+    am = if m1_chance < mutationRate eap
+      then displaceMutation ac
+      else ac
+    bm = if m2_chance < mutationRate eap
+      then displaceMutation bc
+      else bc
     cs = V.fromList [am, bm]
+-}
+
+reproduce :: (MonadRandom m) => Pool -> EAProblem -> m Pool
+reproduce parents eap = vectorConcatMapM mate mates
+    where
+  half = V.length parents `div` 2
+  mates = V.zip (V.take half parents) (V.drop half parents)
+  mate :: (MonadRandom m) => (Ind, Ind) -> m Pool
+  mate (a, b) = do
+    let p1g = genome a
+        p2g = genome b
+    r1 <- getRandomR(0,5)
+    r2 <- getRandomR(0,5)
+    return $ V.fromList [a { genome = p1g }, a { genome = p2g }]
+
+
+vectorConcatMapM :: Monad m => (a -> m (V.Vector b)) -> V.Vector a -> m (V.Vector b)
+vectorConcatMapM f v = join <$> sequence (fmap f v)
 
 
 evalFitnesses :: Pool -> DataSet -> Pool
