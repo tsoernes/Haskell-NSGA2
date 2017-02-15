@@ -7,7 +7,7 @@ import           Control.Monad.ST
 import qualified Data.Vector          as V
 import qualified Data.Vector.Generic  as VG
 import qualified Data.Vector.Unboxed  as VU
-import Genome
+import           Genome
 
 -- parent_a = [1, 4, 2, 8, 5, 7, 3, 6, 9]
 -- parent_b = [7, 5, 3, 1, 9, 8, 6, 4, 2]
@@ -52,23 +52,9 @@ import           Control.Monad
 import           Control.Monad.Random
 import qualified Data.Vector.Unboxed  as VU
 
-testReprod :: IO()
-testReprod = do
-  let parents = VU.fromList [1::Int,2,3,4,5,6,7,8,9,10]
-  children <- reproduce parents
-  print children
-
--- concat monadic
-reproduce :: (MonadRandom m) => Pool -> m Pool
-reproduce parents = vectorConcatMapM mate mates
-    where
-  half = VU.length parents `div` 2
-  mates = VU.zip (VU.take half parents) (VU.drop half parents)
-  mate :: (MonadRandom m) => (Ind, Ind) -> m Pool
-  mate (a, b) = do
-    r1 <- getRandomR(0,5)
-    r2 <- getRandomR(0,5)
-    return $ VU.fromList [a+r1, b+r2]
-
-vectorConcatMapM :: Monad m => (a -> m (V.Vector b)) -> V.Vector a -> m (V.Vector b)
-vectorConcatMapM f v = join <$> sequence (fmap f v)
+main :: IO()
+main = do
+  aNum <- if True
+          then getRandomR(0::Int,10)
+          else return 3
+  print aNum

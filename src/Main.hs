@@ -20,16 +20,15 @@ module Main (
 import           System.Random
 
 import           Genome
-import           Load          (load1)
+import           Load
 import           Population
 
 main :: IO ()
 main = do
   g <- getStdGen
-  ds <- load1
-  let
-      eap = eaPreset1
-      (c, a, _) = eaRunner ds eap g
+  ds <- loadDS
+  let eap = eaPreset1
+  (c, a) <- eaRunner ds eap
   print $ showFits c
   print $ showFits a
   print $ showRanks c
