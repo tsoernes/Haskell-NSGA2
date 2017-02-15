@@ -3,23 +3,20 @@ module ParentSelection (
 ) where
 
 
-import qualified Data.Vector   as V
-import           Prelude       as P
-import           System.Random
+import           Control.Monad.Random
+import qualified Data.Vector.Generic  as V
+import           Prelude              as P
 
 import           Genome
 import           RandUtils
-import           SortUtils     (indCmpCrowded)
+import           SortUtils            (indCmpCrowded)
 
 
 -- No replacement
-tournamentSelect :: (RandomGen g) => Pool -> Int -> g-> (Pool, g)
-tournamentSelect adults k g =
-  V.foldl step (V.empty, g) $ V.enumFromN 0 (V.length adults)
+tournamentSelect :: (MonadRandom m) => Pool -> Int -> m Pool
+tournamentSelect adults k = V.replicateM (V.length adults) pick
     where
-  step :: (RandomGen g) => (Pool, g) -> Int -> (Pool, g)
-  step (parents, g1) _ =
-    (V.snoc parents winner, g2)
-      where
-    (group, g2) = shuffle adults k g1
-    winner = V.maximumBy indCmpCrowded group
+  pick :: (MonadRandom m) => m Ind
+  pick = do
+    group <- randSample adults k
+    return $ V.maximumBy indCmpCrowded group

@@ -13,7 +13,7 @@ import           RandUtils
 -- and reinserted at a random position
 
 
--- Is it safe to unsafeThaw the input indvidual and mutate it?
+-- | Is it safe to unsafeThaw the input indvidual and mutate it?
 -- E.g. is input Ind. used after function call? If not, is there any
 -- performance advantage to doing safeThaw (O(n)) -> mutate ->
 -- unsafeFreeze(O(1)) inside runST?
@@ -22,7 +22,7 @@ import           RandUtils
 
 -- can some operations, here or elsewhere, be parallellized?
 displaceMutation :: (MonadRandom m, V.Vector v a) => v a -> m (v a)
-displaceMutation  genome = do
+displaceMutation genome = do
   let len = V.length genome
   idxs@(l, r) <- randIndices len
   insert_pos <- getRandomR (0, len-(r-l))
