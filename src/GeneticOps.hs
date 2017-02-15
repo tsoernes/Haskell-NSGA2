@@ -1,66 +1,56 @@
 module GeneticOps (
-  displaceMutation, orderedCrossover
+  displaceMutation, orderedCrossover, orderedCrossoverStat
 ) where
 
-import qualified Data.Vector.Generic as VG
-import           System.Random
-
-import           Genome
+import           Control.Monad.Random
+import qualified Data.Vector.Generic  as V
+import           Control.Monad.ST
 import           RandUtils
 
 
-displaceMutation :: (RandomGen g) => Ind -> g -> (Ind, g)
-displaceMutation ind rgen =
-  (ind { genome = mutated }, rgen2)
+-- Displacement Mutation:
+-- A continous part (in the case of TSP, a sub-route) is taken out
+-- and reinserted at a random position
+
+
+-- Is it safe to unsafeThaw the input indvidual and mutate it?
+-- E.g. is input Ind. used after function call? If not, is there any
+-- performance advantage to doing safeThaw (O(n)) -> mutate ->
+-- unsafeFreeze(O(1)) inside runST?
+
+-- thaw->freeze gives no improvement if only using V.++
+
+-- can some operations, here or elsewhere, be parallellized?
+displaceMutation :: (MonadRandom m, V.Vector v a) => v a -> m (v a)
+displaceMutation  genome = do
+  let len = V.length genome
+  idxs@(l, r) <- randIndices len
+  insert_pos <- getRandomR (0, len-(r-l))
+  return $ displaceMutationStat idxs insert_pos genome
+
+
+displaceMutationStat :: (V.Vector v a) => (Int, Int) -> Int -> v a -> v a
+displaceMutationStat (left, right) insert_pos genome = mutated
     where
-  genome' = genome ind
-  (i_left, i_right, rgen1) = randIndices (VG.length genome') rgen
-  n = i_right - i_left
-  part = VG.slice i_left n genome'
-  leftovers = VG.take i_left genome' VG.++ VG.drop i_right genome'
-  (insert_pos, _, rgen2) = randIndices (VG.length leftovers) rgen1
-  mutated = VG.take insert_pos leftovers VG.++ part VG.++ VG.drop insert_pos leftovers
+  n = right - left
+  part = V.slice left n genome -- O(1)
+  leftovers = V.take left genome V.++ V.drop right genome -- O(m+n)
+  mutated = V.take insert_pos leftovers V.++ part V.++ V.drop insert_pos leftovers -- O(m+n)
 
 
-{-
-if np.random.rand() < mutation_rate:
-    i_left, i_right = _random_indices(len(genome))
-    part = genome[i_left:i_right]
-    mutated_genome = np.concatenate([genome[:i_left], genome[i_right:]])
-    insert_pos = np.random.randint(0, len(mutated_genome)+1)
-    mutated_genome = np.insert(mutated_genome, insert_pos, part)
-    return mutated_genome
-return genome
--}
+-- | Ordered crossover ("OX-1") between two individuals
+-- http://creationwiki.org/pool/images/thumb/d/dc/Ox.png/800px-Ox.png
+orderedCrossover :: (MonadRandom m, V.Vector v a) => v a -> v a -> m (v a, v a)
+orderedCrossover parent_a parent_b = do
+  idxs <- randIndices (V.length parent_a)
+  return (orderedCrossoverStat idxs parent_a parent_b)
 
-orderedCrossover :: (RandomGen g) => Ind -> Ind -> g -> (Ind, Ind, g)
-orderedCrossover p_a p_b rgen =
-  (p_a { genome = child_a }, p_b { genome = child_b }, rgen2)
+
+orderedCrossoverStat :: (V.Vector v a) => (Int, Int) -> v a -> v a -> (v a, v a)
+orderedCrossoverStat (left, right) parent_a parent_b = (child_a, child_b)
     where
-  parent_a = genome p_a
-  parent_b = genome p_b
-  (p_left, p_right, rgen1) = randIndices (VG.length parent_a) rgen
-  n = p_right - p_left
-  c_a_mid = VG.slice p_left n parent_a
-  c_b_mid = VG.slice p_left n parent_b
-  c_a_elems = VG.filter (`VG.notElem` c_a_mid) parent_b
-  c_b_elems = VG.filter (`VG.notElem` c_b_mid) parent_a
-  (r_left, r_right, rgen2) = randIndices (VG.length parent_a) rgen1
-  child_a = VG.take r_left c_a_elems VG.++ c_a_mid VG.++ VG.drop r_right c_a_elems
-  child_b = VG.take r_left c_b_elems VG.++ c_b_mid VG.++ VG.drop r_right c_b_elems
-
-{-
-child_a[i_left:i_right] = genome_a[i_left:i_right]
-child_b[i_left:i_right] = genome_b[i_left:i_right]
-child_chain = np.concatenate((np.arange(i_right, size), np.arange(0, i_left)))
-parent_chain = np.concatenate((np.arange(i_right, size), np.arange(0, i_right)))
-for chain_i, i in enumerate(child_chain):
-    for j in parent_chain[chain_i:]:
-        if not np.any(genome_b[j] == child_a):
-            child_a[i] = genome_b[j]
-            break
-    for j in parent_chain[chain_i:]:
-        if not np.any(genome_a[j] == child_b):
-            child_b[i] = genome_a[j]
-            break
--}
+      n = right - left
+      c_a_mid = V.slice left n parent_a
+      c_b_mid = V.slice left n parent_b
+      child_a = V.take left parent_a V.++ c_a_mid V.++ V.drop right parent_a
+      child_b = V.take left parent_b V.++ c_b_mid V.++ V.drop right parent_b
