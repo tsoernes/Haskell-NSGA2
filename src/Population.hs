@@ -60,27 +60,7 @@ eaRunner ds eap = do
         return (newChildren, newAdults)
 
   return $ foldM runGen (initPool, V.empty) [0..(nGenerations eap)]
-{-
-reproduce' :: (MonadRandom m) => Pool -> EAProblem -> m Pool
-reproduce' parents eap =
-  V.foldl mate V.empty $ V.zip (V.take half parents) (V.drop half parents)
-    where
-  half = V.length parents `div` 2
-  mate :: (MonadRandom m) => (Ind, Ind) -> m Pool
-  mate (a, b) =
-      where
-    [c_chance, m1_chance, m2_chance] <- take 3 getRandoms
-    (ac, bc) = if c_chance < crossoverRate eap
-      then orderedCrossover a b
-      else (a, b)
-    am = if m1_chance < mutationRate eap
-      then displaceMutation ac
-      else ac
-    bm = if m2_chance < mutationRate eap
-      then displaceMutation bc
-      else bc
-    cs = V.fromList [am, bm]
--}
+
 
 reproduce :: (MonadRandom m) => Pool -> EAProblem -> m Pool
 reproduce parents eap = vectorConcatMapM mate mates
@@ -88,26 +68,36 @@ reproduce parents eap = vectorConcatMapM mate mates
   half = V.length parents `div` 2
   mates = V.zip (V.take half parents) (V.drop half parents)
   mate :: (MonadRandom m) => (Ind, Ind) -> m Pool
-  mate (a, b) = do
-    let p1g = genome a
-        p2g = genome b
-    r1 <- getRandomR(0,5)
-    r2 <- getRandomR(0,5)
-    return $ V.fromList [a { genome = p1g }, a { genome = p2g }]
+  mate (ind_a, ind_b) = do
+    let a = genome ind_a
+        b = genome ind_b
+    [c_chance, m1_chance, m2_chance] <- take 3 `fmap` getRandoms
+    (a_cross, b_cross) <- if c_chance < crossoverRate eap
+                          then orderedCrossover a b
+                          else return (b, a)
+    a_mut <- if m1_chance < mutationRate eap
+              then displaceMutation a_cross
+              else return a_cross
+    b_mut <- if m2_chance < mutationRate eap
+              then displaceMutation b_cross
+              else return b_cross
+    return $ V.fromList [ind_a { genome = a_mut }, ind_b { genome = b_mut }]
 
 
 vectorConcatMapM :: Monad m => (a -> m (V.Vector b)) -> V.Vector a -> m (V.Vector b)
 vectorConcatMapM f v = join <$> sequence (fmap f v)
 
 
+-- Can this be made more general? E.g. to work for any number of fitnesses.
+-- then genome (and dataset?) need to be abstracted and be less descriptive and
+-- intuitive?
 evalFitnesses :: Pool -> DataSet -> Pool
-evalFitnesses children ds =
-  V.map evalFit children
+evalFitnesses children dataset = V.map evalFit children
     where
-  evalFit ind = ind { fitnesses = VU.fromList [totDist, totCost] }
+  evalFit ind = ind { fitnesses = VU.fromList [totalDist, totalCost] }
       where
     neighbors = VU.zip (VU.init $ genome ind) (VU.tail $ genome ind)
-    totDist = VU.foldr' d 0 neighbors
-    totCost = VU.foldr' c 0 neighbors
-    d (a,b) acc = acc + ((dist ds V.! a) V.! b)
-    c (a,b) acc = acc + ((cost ds V.! a) V.! b)
+    totalDist = VU.foldr' sumDist 0 neighbors
+    totalCost = VU.foldr' sumCost 0 neighbors
+    sumDist (a,b) acc = acc + ((dist dataset V.! a) V.! b)
+    sumCost (a,b) acc = acc + ((cost dataset V.! a) V.! b)
