@@ -78,8 +78,7 @@ setRank idx rank' pool = do
   return np
 
 setRank' :: Int -> Int -> Pool -> Pool
-setRank' idx rank' pool = do
-  V.update pool (V.fromList [(idx, updated_ind)])
+setRank' idx rank' pool = V.update pool (V.fromList [(idx, updated_ind)])
     where
   updated_ind = (pool V.! idx) { rank = rank' }
 

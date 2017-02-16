@@ -1,10 +1,10 @@
 -----------------------------------------------------------------------------
 --
 -- Module      :  Main
--- Copyright   :
--- License     :  AllRightsReserved
+-- Copyright   :  None
+-- License     :  MIT
 --
--- Maintainer  :
+-- Maintainer  : Torstein Sørnes
 -- Stability   :
 -- Portability :
 --

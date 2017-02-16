@@ -8,13 +8,13 @@ import           Control.Monad.ST
 import qualified Data.Vector                 as V
 import qualified Data.Vector.Generic         as VG
 import           Data.Vector.Generic.Mutable as VGM
-import qualified Data.Vector.Unboxed         as VU
+import qualified Data.Vector.Unboxed         as VU 
 
 
 -- | Create @nvecs@ unboxed vectors with length @veclen@, each containing the
 -- numbers 0 to @veclen@ exlusive, randomly shuffled.
 randVectors :: (MonadRandom m) => Int -> Int ->  m (V.Vector (VU.Vector Int))
-randVectors n len = do V.replicateM n (randVector len)
+randVectors n len = V.replicateM n (randVector len)
 
 
 -- | Get a vector of length @n@, containing the numbers 0 to @n@, randomly sorted
@@ -41,16 +41,14 @@ randShuffle vec = randSample vec $ VG.length vec
 randSample :: (MonadRandom m, (VG.Vector v a)) => v a -> Int -> m (v a)
 randSample vec len = do
   let getR i = do
-          r <- getRandomR (i, (VG.length vec)-1)
+          r <- getRandomR (i, VG.length vec - 1)
           return (i, r)
 
   swaps <- mapM getR [0..len-1]
 
   let vec_rands = runST $ do
           vec_mut <- VG.thaw vec
-          forM_ swaps $ \(i, j) -> do
-              VGM.swap vec_mut i j
-          vec_rands' <- VG.unsafeFreeze vec_mut
-          return vec_rands'
+          forM_ swaps $ uncurry (VGM.swap vec_mut)
+          VG.unsafeFreeze vec_mut
 
   return $ VG.take len vec_rands
