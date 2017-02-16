@@ -1,10 +1,9 @@
 module GeneticOps (
-  displaceMutation, orderedCrossover, orderedCrossoverStat
+  displaceMutation, displaceMutationStat, orderedCrossover, orderedCrossoverStat
 ) where
 
 import           Control.Monad.Random
 import qualified Data.Vector.Generic  as V
-import           Control.Monad.ST
 import           RandUtils
 
 
@@ -40,17 +39,25 @@ displaceMutationStat (left, right) insert_pos genome = mutated
 
 -- | Ordered crossover ("OX-1") between two individuals
 -- http://creationwiki.org/pool/images/thumb/d/dc/Ox.png/800px-Ox.png
-orderedCrossover :: (MonadRandom m, V.Vector v a) => v a -> v a -> m (v a, v a)
+orderedCrossover :: (Eq a, MonadRandom m, V.Vector v a) => v a -> v a -> m (v a, v a)
 orderedCrossover parent_a parent_b = do
   idxs <- randIndices (V.length parent_a)
   return (orderedCrossoverStat idxs parent_a parent_b)
 
 
-orderedCrossoverStat :: (V.Vector v a) => (Int, Int) -> v a -> v a -> (v a, v a)
+orderedCrossoverStat :: (Eq a, V.Vector v a) => (Int, Int) -> v a -> v a -> (v a, v a)
 orderedCrossoverStat (left, right) parent_a parent_b = (child_a, child_b)
     where
       n = right - left
+      -- Initialize a child with a slice from its parent
       c_a_mid = V.slice left n parent_a
       c_b_mid = V.slice left n parent_b
-      child_a = V.take left parent_a V.++ c_a_mid V.++ V.drop right parent_a
-      child_b = V.take left parent_b V.++ c_b_mid V.++ V.drop right parent_b
+      -- Find missing genes from the opposite parents, in the order as they
+      -- appear starting from the right of the slice looping around to the left
+      c_a_miss = V.filter (`V.notElem` c_a_mid) (V.drop right parent_b V.++ V.take right parent_b)
+      c_b_miss = V.filter (`V.notElem` c_b_mid) (V.drop right parent_a V.++ V.take right parent_a)
+      splitpos = (V.length parent_a) - right
+      (ra, la) = V.splitAt splitpos c_a_miss
+      (rb, lb) = V.splitAt splitpos c_b_miss
+      child_a = la V.++ c_a_mid V.++ ra
+      child_b = lb V.++ c_b_mid V.++ rb

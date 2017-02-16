@@ -32,7 +32,6 @@ executable nsga
         RandUtils,
         Load,
         Population,
-
         Rubbish,
         Test
     ghc-options: -ferror-spans -Wall -fno-warn-unused-binds -fno-warn-unused-matches -Wunused-top-binds -g
@@ -41,14 +40,16 @@ test-suite test-nsga
     type: exitcode-stdio-1.0
     main-is: TestMain.hs
     build-depends:
-        QuickCheck -any,
+        -- QuickCheck -any,
+        -- HUnit -any,
+        -- test-framework -any,
+        -- test-framework-hunit -any,
+        tasty,
+        tasty-hunit,
         base -any,
         doctest -any,
         vector -any,
         random -any,
-        HUnit -any,
-        test-framework -any,
-        test-framework-hunit -any,
         mtl,
         MonadRandom >= 0.4.2.3
     default-language: Haskell2010
