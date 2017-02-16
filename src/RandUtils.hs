@@ -8,22 +8,22 @@ import           Control.Monad.ST
 import qualified Data.Vector                 as V
 import qualified Data.Vector.Generic         as VG
 import           Data.Vector.Generic.Mutable as VGM
-import qualified Data.Vector.Unboxed         as VU 
+import qualified Data.Vector.Unboxed         as VU
 
 
--- | Create @nvecs@ unboxed vectors with length @veclen@, each containing the
--- numbers 0 to @veclen@ exlusive, randomly shuffled.
+-- | Create 'nvecs' unboxed vectors of length 'veclen', each containing the
+-- numbers 0 to 'veclen', randomly shuffled.
 randVectors :: (MonadRandom m) => Int -> Int ->  m (V.Vector (VU.Vector Int))
 randVectors n len = V.replicateM n (randVector len)
 
 
--- | Get a vector of length @n@, containing the numbers 0 to @n@, randomly sorted
+-- | Get a vector of length 'n', containing the numbers 0 to 'n', randomly shuffled
 randVector :: (MonadRandom m) => Int -> m (VU.Vector Int)
 randVector len = randShuffle (VU.enumFromN 0 len)
 
 
-  -- | Get two distinct Ints in the interval [0, @len@], where the lowest
-  -- number appears first in the tuple
+-- | Get two distinct 'Ints' in the interval 0 through 'len', with the lowest
+-- number appearing first in the tuple
 randIndices :: (MonadRandom m) => Int -> m (Int, Int)
 randIndices len = do
   i_left <- getRandomR (0, len-1)
@@ -36,8 +36,8 @@ randShuffle :: (MonadRandom m, (VG.Vector v a)) => v a -> m (v a)
 randShuffle vec = randSample vec $ VG.length vec
 
 
--- | Fisher-Yates shuffle. To shuffle a vector @vec@, pass its length as @len@.
--- To get a random sample from a vector, pass the desired sample size as @len@.
+-- | Fisher-Yates shuffle. To shuffle a 'vector', pass its 'length'.
+-- To get a random sample from a vector, pass the desired sample size as 'length'.
 randSample :: (MonadRandom m, (VG.Vector v a)) => v a -> Int -> m (v a)
 randSample vec len = do
   let getR i = do

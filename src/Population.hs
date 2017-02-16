@@ -32,7 +32,7 @@ data EAProblem = EAProblem
 eaRunner :: (MonadRandom m) => DataSet -> EAProblem -> m (Pool, Pool)
 eaRunner ds eap = do
   initPool <- newPool (popSize eap) (nCities eap)
-  -- | Run through one generation, generating/selecting new children and new adults
+  -- Run through one generation, generating/selecting new children and new adults
   let runGen :: (MonadRandom m) => (Pool, Pool) -> Int -> m (Pool, Pool)
       runGen (children, adults) _ = do
         let children' = evalFitnesses children ds

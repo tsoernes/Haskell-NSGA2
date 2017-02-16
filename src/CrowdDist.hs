@@ -9,7 +9,7 @@ import           Genome
 import           SortUtils
 
 
--- Assign crowding distance to individuals in a non-dominated front
+-- | Assign crowding distance to a pool of mutually non-dominated individuals
 cDistAssignFront :: Pool -> Pool
 cDistAssignFront front =
   V.foldl cDistAssignFit front0cd fitIdxs
@@ -21,7 +21,7 @@ cDistAssignFront front =
   fitIdxs = V.enumFromN 0 (VU.length $ fitnesses $ front V.! 0)
 
 
--- Assign crowding distance to a front for a given fitness
+-- | Assign crowding distance to a front for a given fitness
 cDistAssignFit :: Pool -> Int -> Pool
 cDistAssignFit front fitIdx =
   V.foldl cdAssign startFront indIdxs
@@ -38,7 +38,7 @@ cDistAssignFit front fitIdx =
   indIdxs = V.enumFromN 1 (lastIndIdx-1)
 
 
--- Assign crowding distance to an individual for a given fitness
+-- | Assign crowding distance to an individual for a given fitness
 cDistAssignInd :: Int -> Float -> Pool -> Int -> Pool
 cDistAssignInd fitIdx fitFactor front indIdx =
   setCdist indIdx cdist' front

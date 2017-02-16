@@ -10,8 +10,8 @@ import           RankSort
 import           SortUtils
 
 
-{- |Select individuals from a combined pool of children and adults from the
-previous generation first by rank and then by crowding distance.-}
+-- |Select individuals from a pool of 'children' and pool of 'adults'
+--  first by rank and then by crowding distance.
 adultSelectRankCdist :: Pool -> Pool -> Pool
 adultSelectRankCdist children adults =
   rank_pool V.++ crowd_pool

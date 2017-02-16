@@ -8,8 +8,8 @@ import           RandUtils
 data Ind = Ind
     { fitnesses :: VU.Vector Float
     , genome    :: VU.Vector Int
-    , rank      :: Int
-    , cdist     :: Float -- crowding distance
+    , rank      :: Int -- ^ Equals the index of the non-dominated (pareto) front, i.e. lower is better
+    , cdist     :: Float -- ^ Crowding distance
     }
 
 defaultFits :: VU.Vector Float
@@ -56,12 +56,12 @@ showGenomes =
 
 
 -- Create a new pool with @nInds@ individuals with random genomes of length
--- @genomeLen@
+-- 'genomeLen'
 newPool :: (MonadRandom m) => Int -> Int -> m Pool
 newPool nInds genomeLen = V.replicateM nInds (newInd genomeLen)
 
 
--- Create a new individual with a random genome of length @genomeLen@ and other
+-- | Create a new individual with a random genome of length 'genomeLen' and other
 -- values set to defaults
 newInd :: (MonadRandom m) => Int -> m Ind
 newInd genomeLen = do
@@ -69,21 +69,24 @@ newInd genomeLen = do
   return (Ind defaultFits genome' defaultRank defaultCdist)
 
 
--- Set rank of an individual and return the pool with the updated individual
+{-
 setRank :: (MonadRandom m) => Int -> Int -> m Pool -> m Pool
 setRank idx rank' pool = do
   p <- pool
   let updated_ind = (p V.! idx) { rank = rank' }
       np = V.update p (V.fromList [(idx, updated_ind)])
   return np
+-}
 
-setRank' :: Int -> Int -> Pool -> Pool
-setRank' idx rank' pool = V.update pool (V.fromList [(idx, updated_ind)])
+
+-- | Set rank of an individual and return the pool with the updated individual
+setRank :: Int -> Int -> Pool -> Pool
+setRank idx rank' pool = V.update pool (V.fromList [(idx, updated_ind)])
     where
   updated_ind = (pool V.! idx) { rank = rank' }
 
 
--- Set crowding distance of an individual and return the pool with the updated
+-- | Set crowding distance of an individual and return the pool with the updated
 -- individual
 setCdist :: Int -> Float -> Pool -> Pool
 setCdist idx cdist' pool =
@@ -92,6 +95,7 @@ setCdist idx cdist' pool =
   updated_ind = (pool V.! idx) { cdist = cdist' }
 
 
+-- | Get fitness of an individual in a 'pool' with the given 'index' and 'fitness index'
 getFit :: Pool -> Int -> Int -> Float
 getFit pool indIdx fitIdx =
   fitnesses (pool V.! indIdx) VU.! fitIdx

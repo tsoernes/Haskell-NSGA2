@@ -12,8 +12,11 @@ import           RandUtils
 import           SortUtils            (indCmpCrowded)
 
 
--- No replacement, i.e. an individual can be picked multiple times
-tournamentSelect :: (MonadRandom m) => Pool -> Int -> m Pool
+-- | Tournament Selection without replacement, i.e. an individual can be picked multiple times
+tournamentSelect :: (MonadRandom m)
+                 => Pool
+                 -> Int -- ^ Tournament size 'k'
+                 -> m Pool
 tournamentSelect adults k = V.replicateM (V.length adults) pick
     where
   pick :: (MonadRandom m) => m Ind

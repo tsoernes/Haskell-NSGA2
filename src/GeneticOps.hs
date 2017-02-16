@@ -7,18 +7,15 @@ import qualified Data.Vector.Generic  as V
 import           RandUtils
 
 
--- Displacement Mutation:
--- A continous part (in the case of TSP, a sub-route) is taken out
+-- | Displacement Mutation:
+-- A continous part of random length is taken out from a random position
 -- and reinserted at a random position
 
-
--- | Is it safe to unsafeThaw the input indvidual and mutate it?
+-- Is it safe to unsafeThaw the input indvidual and mutate it?
 -- E.g. is input Ind. used after function call? If not, is there any
 -- performance advantage to doing safeThaw (O(n)) -> mutate ->
 -- unsafeFreeze(O(1)) inside runST?
-
 -- thaw->freeze gives no improvement if only using V.++
-
 -- can some operations, here or elsewhere, be parallellized?
 displaceMutation :: (MonadRandom m, V.Vector v a) => v a -> m (v a)
 displaceMutation genome = do
@@ -28,6 +25,7 @@ displaceMutation genome = do
   return $ displaceMutationStat idxs insert_pos genome
 
 
+-- | Displacement mutation with chosen 'slice indexes' and 'insert position'
 displaceMutationStat :: (V.Vector v a) => (Int, Int) -> Int -> v a -> v a
 displaceMutationStat (left, right) insert_pos genome = mutated
     where
@@ -37,7 +35,7 @@ displaceMutationStat (left, right) insert_pos genome = mutated
   mutated = V.take insert_pos leftovers V.++ part V.++ V.drop insert_pos leftovers -- O(m+n)
 
 
--- | Ordered crossover ("OX-1") between two individuals
+-- | Ordered crossover (OX-1) between two individuals
 -- http://creationwiki.org/pool/images/thumb/d/dc/Ox.png/800px-Ox.png
 orderedCrossover :: (Eq a, MonadRandom m, V.Vector v a) => v a -> v a -> m (v a, v a)
 orderedCrossover parent_a parent_b = do
@@ -45,6 +43,7 @@ orderedCrossover parent_a parent_b = do
   return (orderedCrossoverStat idxs parent_a parent_b)
 
 
+-- | Ordered crossover with chosen 'slice indexes'
 orderedCrossoverStat :: (Eq a, V.Vector v a) => (Int, Int) -> v a -> v a -> (v a, v a)
 orderedCrossoverStat (left, right) parent_a parent_b = (child_a, child_b)
     where
