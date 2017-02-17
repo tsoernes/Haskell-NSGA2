@@ -1,6 +1,7 @@
 module Population (
   eaRunner,
-  EAProblem(..)
+  EAProblem(..),
+  evalFitnesses
 ) where
 
 import           AdultSelection

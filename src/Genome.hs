@@ -10,7 +10,7 @@ data Ind = Ind
     , genome    :: VU.Vector Int
     , rank      :: Int -- ^ Equals the index of the non-dominated (pareto) front, i.e. lower is better
     , cdist     :: Double -- ^ Crowding distance
-    }
+    } deriving (Eq)
 
 defaultFits :: VU.Vector Double
 defaultFits = VU.fromList [-1.0, -1.0]
@@ -52,9 +52,12 @@ showGenomes :: Pool -> String
 showGenomes = V.foldl1 (++) . V.map (show . genome)
 
 
--- | Create a new pool of 'nInds' individuals with random genomes of length
--- 'genomeLen'
-newPool :: (MonadRandom m) => Int -> Int -> m Pool
+-- @TODO this should probably not be in this module
+-- | Create a new pool of individuals
+newPool :: (MonadRandom m)
+        => Int      -- ^ Number of individuals
+        -> Int      -- ^ Genome length
+        -> m Pool
 newPool nInds genomeLen = V.replicateM nInds (newInd genomeLen)
 
 

@@ -39,7 +39,7 @@ cDistAssignFit front fitIdx =
 
 
 -- | Assign crowding distance to an individual for a given fitness
-cDistAssignInd :: Int -> Float -> Pool -> Int -> Pool
+cDistAssignInd :: Int -> Double -> Pool -> Int -> Pool
 cDistAssignInd fitIdx fitFactor front indIdx =
   setCdist indIdx cdist' front
     where
