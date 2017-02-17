@@ -16,7 +16,7 @@ import           SortUtils            (indCmpCrowded)
 tournamentSelect :: (MonadRandom m)
                  => Pool
                  -> Int -- ^ Tournament size 'k'
-                 -> m Pool
+                 -> m Pool -- ^ A pool of the same size as input pool containing the winners 
 tournamentSelect adults k = V.replicateM (V.length adults) pick
     where
   pick :: (MonadRandom m) => m Ind

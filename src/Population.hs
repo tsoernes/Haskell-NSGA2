@@ -14,13 +14,14 @@ import           Load
 import           ParentSelection
 
 
+-- @TODO should mutation and crossover function be abstracted out into EAProblem?
 data EAProblem = EAProblem
     { nGenerations  :: Int
     , popSize       :: Int
     , nCities       :: Int
     , tournSize     :: Int
-    , mutationRate  :: Float
-    , crossoverRate :: Float
+    , mutationRate  :: Double
+    , crossoverRate :: Double
     }
 
 
@@ -44,6 +45,7 @@ eaRunner ds eap = do
   foldM runGen (initPool, V.empty) [0..(nGenerations eap)]
 
 
+-- | Generate children from a pool of 'adults' using crossover and mutation.
 reproduce :: (MonadRandom m) => Pool -> EAProblem -> m Pool
 reproduce parents eap = vectorConcatMapM mate mates
     where
@@ -66,13 +68,11 @@ reproduce parents eap = vectorConcatMapM mate mates
     return $ V.fromList [ind_a { genome = a_mut }, ind_b { genome = b_mut }]
 
 
-vectorConcatMapM :: Monad m => (a -> m (V.Vector b)) -> V.Vector a -> m (V.Vector b)
-vectorConcatMapM f v = join <$> sequence (fmap f v)
-
-
 -- Can this be made more general? E.g. to work for any number of fitnesses.
 -- then genome (and dataset?) need to be abstracted and be less descriptive and
 -- intuitive?
+-- | Calculate the total cost and total distance of the route
+-- which the genome represents
 evalFitnesses :: Pool -> DataSet -> Pool
 evalFitnesses children dataset = V.map evalFit children
     where
@@ -83,3 +83,6 @@ evalFitnesses children dataset = V.map evalFit children
     totalCost = VU.foldr' sumCost 0 neighbors
     sumDist (a,b) acc = acc + ((dist dataset V.! a) V.! b)
     sumCost (a,b) acc = acc + ((cost dataset V.! a) V.! b)
+
+vectorConcatMapM :: Monad m => (a -> m (V.Vector b)) -> V.Vector a -> m (V.Vector b)
+vectorConcatMapM f v = join <$> sequence (fmap f v)
