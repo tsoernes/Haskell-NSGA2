@@ -1,7 +1,20 @@
-module TestGenome where
+module TestGenome (
+  tests
+) where
 
+import           Control.Monad.ST
 import qualified Data.Vector         as V
 import qualified Data.Vector.Unboxed as VU
-import           System.Random
+import           GeneticOps
+import           Genome
+import           Load
+import           Population
+import           SortUtils
+import           Test.Tasty
+import           Test.Tasty.HUnit
 
-import           RandUtils
+tests = testGroup "RankSort" [unitTests]
+
+unitTests = testGroup "Unit tests"
+  [
+  ]

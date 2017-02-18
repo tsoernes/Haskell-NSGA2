@@ -1,7 +1,7 @@
 module Population (
   eaRunner,
   EAProblem(..),
-  evalFitnesses
+  evalFitnessesTSP
 ) where
 
 import           AdultSelection
@@ -17,12 +17,14 @@ import           ParentSelection
 
 -- @TODO should mutation and crossover function be abstracted out into EAProblem?
 data EAProblem = EAProblem
-    { nGenerations  :: Int
-    , popSize       :: Int
-    , nCities       :: Int
-    , tournSize     :: Int
-    , mutationRate  :: Double
-    , crossoverRate :: Double
+    { nGenerations      :: Int -- ^ Number of generations to run
+    , popSize           :: Int -- ^ Population size
+    , nCities           :: Int
+    , tournSize         :: Int
+    , mutationRate      :: Double
+    , crossoverRate     :: Double
+    , strictlyBetterCmp :: V.Vector (Fitness -> Fitness -> Bool) -- ^ Comparator for each fitness to determine if a fitness value is strictly better than another. E.g. (<)
+    , noWorseCmp        :: V.Vector (Fitness -> Fitness -> Bool) -- ^ Comparator for each fitness to determine if a fitness value is no worse than another. E.g. (<=)
     }
 
 
@@ -31,13 +33,13 @@ data EAProblem = EAProblem
 -- Select parents ->
 -- Reproduce ->
 -- Repeat
-eaRunner :: (MonadRandom m) => DataSet -> EAProblem -> m (Pool, Pool)
+eaRunner :: (MonadRandom m) => DataSet -> EAProblem -> m (Pool Int, Pool Int)
 eaRunner ds eap = do
-  initPool <- newPool (popSize eap) (nCities eap)
+  initPool <- newTSPPool (popSize eap) (nCities eap)
   -- Run through one generation, generating/selecting new children and new adults
-  let runGen :: (MonadRandom m) => (Pool, Pool) -> Int -> m (Pool, Pool)
+  let --runGen :: (MonadRandom m, Eq g) => (Pool g, Pool g) -> Int -> m (Pool g, Pool g)
       runGen (children, adults) _ = do
-        let children' = evalFitnesses children ds
+        let children' = evalFitnessesTSP children ds
             newAdults = adultSelectRankCdist children' adults
         newParents <- tournamentSelect newAdults (tournSize eap)
         newChildren <- reproduce newParents eap
@@ -47,12 +49,12 @@ eaRunner ds eap = do
 
 
 -- | Generate children from a pool of 'adults' using crossover and mutation.
-reproduce :: (MonadRandom m) => Pool -> EAProblem -> m Pool
+reproduce :: (MonadRandom m, Eq g, VU.Unbox g) => Pool g -> EAProblem -> m (Pool g)
 reproduce parents eap = vectorConcatMapM mate mates
     where
   half = V.length parents `div` 2
   mates = V.zip (V.take half parents) (V.drop half parents)
-  mate :: (MonadRandom m) => (Ind, Ind) -> m Pool
+  mate :: (MonadRandom m, Eq g, VU.Unbox g) => (Ind g, Ind g) -> m (Pool g)
   mate (ind_a, ind_b) = do
     let a = genome ind_a
         b = genome ind_b
@@ -74,8 +76,8 @@ reproduce parents eap = vectorConcatMapM mate mates
 -- intuitive?
 -- | Calculate the total cost and total distance of the route
 -- which the genome represents
-evalFitnesses :: Pool -> DataSet -> Pool
-evalFitnesses children dataset = V.map evalFit children
+evalFitnessesTSP :: Pool Int -> DataSet -> Pool Int
+evalFitnessesTSP children dataset = V.map evalFit children
     where
   evalFit ind = ind { fitnesses = VU.fromList [totalDist, totalCost] }
       where

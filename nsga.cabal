@@ -32,8 +32,7 @@ executable nsga
         RandUtils,
         Load,
         Population,
-        Rubbish,
-        Test
+        Rubbish
     ghc-options: -ferror-spans -Wall -fno-warn-unused-binds -fno-warn-unused-matches -Wunused-top-binds -g -fsimpl-tick-factor=200
 
 test-suite test-nsga

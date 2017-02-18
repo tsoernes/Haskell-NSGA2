@@ -10,7 +10,7 @@ import           SortUtils
 
 
 -- | Assign crowding distance to a pool of mutually non-dominated individuals
-cDistAssignFront :: Pool -> Pool
+cDistAssignFront :: Pool g -> Pool g
 cDistAssignFront front =
   V.foldl cDistAssignFit front0cd fitIdxs
     where
@@ -22,7 +22,7 @@ cDistAssignFront front =
 
 
 -- | Assign crowding distance to a front for a given fitness
-cDistAssignFit :: Pool -> Int -> Pool
+cDistAssignFit :: Pool g -> Int -> Pool g
 cDistAssignFit front fitIdx =
   V.foldl cdAssign startFront indIdxs
     where
@@ -39,7 +39,7 @@ cDistAssignFit front fitIdx =
 
 
 -- | Assign crowding distance to an individual for a given fitness
-cDistAssignInd :: Int -> Double -> Pool -> Int -> Pool
+cDistAssignInd :: Int -> Float -> Pool g -> Int -> Pool g
 cDistAssignInd fitIdx fitFactor front indIdx =
   setCdist indIdx cdist' front
     where

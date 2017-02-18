@@ -10,9 +10,9 @@ import           RankSort
 import           SortUtils
 
 
--- |Select individuals from a pool of 'children' and pool of 'adults'
+-- | Select individuals from a pool of 'children' and pool of 'adults'
 --  first by rank and then by crowding distance.
-adultSelectRankCdist :: Pool -> Pool -> Pool
+adultSelectRankCdist :: Pool g -> Pool g -> Pool g
 adultSelectRankCdist children adults =
   rank_pool V.++ crowd_pool
     where

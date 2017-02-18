@@ -11,13 +11,12 @@ import           Genome
 
 
 -- Compare two individuals
-type IndCmp =
-  Ind -> Ind -> Ordering
+type IndCmp g = Ind g -> Ind g -> Ordering
 
 
 -- Sort a pool of individuals with the given comparator in place.
 -- Unsafe version that modifies the input vector
-unsafeSortPool :: Pool-> IndCmp -> Pool
+unsafeSortPool :: Pool g-> IndCmp g -> Pool g
 unsafeSortPool pool cmp =
   runST $ do
     v <- V.unsafeThaw pool
@@ -27,7 +26,7 @@ unsafeSortPool pool cmp =
 
 -- Sort a pool of individuals with the given comparator in place.
 -- Unsafe version that modifies the input vector
-sortPool :: Pool-> IndCmp -> Pool
+sortPool :: Pool g-> IndCmp g -> Pool g
 sortPool pool cmp =
   runST $ do
     v <- V.thaw pool
@@ -36,7 +35,7 @@ sortPool pool cmp =
 
 -- Compare two individuals each with two fitnesses by increasing order of fitIdx
 -- and for individuals with equal fitIdx, with increasing order of the other fitness
-indCmpFit :: Int -> IndCmp
+indCmpFit :: Int -> IndCmp g
 indCmpFit fitIdx x y
   | a0 < b0 = LT
   | a0 > b0 = GT
@@ -54,7 +53,7 @@ indCmpFit fitIdx x y
 
 
 -- The 'crowded comparison' operator
-indCmpCrowded :: IndCmp
+indCmpCrowded :: IndCmp g
 indCmpCrowded x y
   | r1 < r2 = LT
   | r1 > r2 = GT
@@ -70,7 +69,7 @@ indCmpCrowded x y
 
 
 -- Descending crowding distance
-indCmpReverseDist :: IndCmp
+indCmpReverseDist :: IndCmp g
 indCmpReverseDist x y
   | d1 > d2 = LT
   | d1 < d2 = GT

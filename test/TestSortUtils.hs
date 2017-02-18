@@ -16,11 +16,11 @@ import           Test.Tasty.HUnit
 
 tests = testGroup "SortUtils" [unitTests]
 
-pool1 :: IO Pool
+pool1 :: IO (Pool Int)
 pool1 = do
-  pool <- newPool 10 10
+  pool <- newTSPPool 10 10
   ds <- loadDS
-  return $ evalFitnesses pool ds
+  return $ evalFitnessesTSP pool ds
 
 unitTests = testGroup "Unit tests"
   [ testCase "Sort Pool" $ do

@@ -1,11 +1,20 @@
 module TestPopulation (
+  tests
 ) where
 
-import qualified Data.Vector as V
+import           Control.Monad.ST
+import qualified Data.Vector         as V
+import qualified Data.Vector.Unboxed as VU
+import           GeneticOps
+import           Genome
 import           Load
 import           Population
---testEaRunner :: (RandomGen g) => DataSet -> EAProblem -> g -> (Pool, Pool, g)
+import           SortUtils
+import           Test.Tasty
+import           Test.Tasty.HUnit
 
---testReproduce :: (RandomGen g) => Pool -> EAProblem -> g -> (Pool, g)
+tests = testGroup "RankSort" [unitTests]
 
---testEvalFitnesses :: Pool -> DataSet -> Pool
+unitTests = testGroup "Unit tests"
+  [
+  ]

@@ -3,6 +3,7 @@ module RankSort (
 ) where
 
 import qualified Data.Vector         as V
+import qualified Data.Vector.Generic as VG
 import qualified Data.Vector.Unboxed as VU
 
 import           Genome
@@ -17,11 +18,11 @@ go = let pool = V.map toInd $ V.fromList [(4,4),(2,3),(4,3),(1,1),(1,3),(2,1),(3
 {- |From a pool sorted by ascending fitness, add individuals one by one to
 the best front where it is not dominated. If the individual is dominated by all
 the current fronts, then add a new one. -}
-rankSort :: Pool -> Fronts
+rankSort :: Pool g -> Fronts g
 rankSort =
   V.foldl insert_ind (V.fromList [V.fromList []])
     where
-  insert_ind :: Fronts -> Ind -> Fronts
+  insert_ind :: Fronts g -> Ind g -> Fronts g
   insert_ind fronts ind = if ind `domByFront` V.last fronts
     then V.snoc fronts (V.fromList [ind { rank = V.length fronts }]) --new front
     else V.update fronts (V.fromList [(ind_rank, upd_front)]) --add to existing
@@ -30,14 +31,13 @@ rankSort =
     upd_front = V.snoc (fronts V.! ind_rank) ind { rank = ind_rank }
 
 
-{- |Find the lowest index of the front where the individual can be inserted
+{- | Find the lowest index of the front where the individual can be inserted
 without being dominated using binary search. The correct insertion point for an
 individual is k if if it's dominated by front (k-1) but not by front k.
 Since the each front is already sorted by fitness, it is only necessary to check
 whether or not the last individual in a front dominates the given individual.-}
-binSearch :: Ind -> Fronts -> Int
-binSearch ind_a fronts =
-  binSearch' 0 (V.length fronts - 1)
+binSearch :: Ind g -> Fronts g -> Int
+binSearch ind_a fronts = binSearch' 0 (V.length fronts - 1)
       where
   binSearch' :: Int -> Int -> Int
   binSearch' low high
@@ -49,21 +49,21 @@ binSearch ind_a fronts =
     mid = (low+high) `div` 2
 
 
-{- |Returns True if individual x dominates individual y; False if y dominates x
+{- | Returns True if individual x dominates individual y; False if y dominates x
 or neither dominate each other. An individual dominates another if it is
-no worse in all objectives and strictly better in at least one objective.
-For cost and distance biobjective TSP, better means less. -}
-dominates :: Ind -> Ind -> Bool
-ind_a `dominates` ind_b =
-  strictly_better && no_worse
+no worse in all fitness objectives and strictly better in at least one objective.
+For cost and distance bi-objective TSP, better means less. -}
+dominates :: Ind g    -- ^ 'individual x'
+          -> Ind g   -- ^ 'individual y'
+          -> Bool
+ind_a `dominates` ind_b = strictly_better && no_worse
     where
-  strictly_better = VU.or $ VU.zipWith (<) x y
-  no_worse = VU.and $ VU.zipWith (<=) x y
+  strictly_better = VG.or $ VG.zipWith (<) x y
+  no_worse = VG.and $ VG.zipWith (<=) x y
   x = fitnesses ind_a
   y = fitnesses ind_b
 
 
--- |Returns whether or not an individual is dominated by any members of the front
-domByFront :: Ind -> Pool -> Bool
-ind `domByFront` front =
-  V.any (`dominates` ind) front
+-- | Returns whether or not the individual is dominated by any members of the front
+domByFront :: Ind g -> Pool g -> Bool
+ind `domByFront` front = V.any (`dominates` ind) front

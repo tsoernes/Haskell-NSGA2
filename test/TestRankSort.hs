@@ -1,21 +1,20 @@
 module TestRankSort (
+  tests
 ) where
 
+import           Control.Monad.ST
 import qualified Data.Vector         as V
 import qualified Data.Vector.Unboxed as VU
-
+import           GeneticOps
 import           Genome
+import           Load
+import           Population
+import           SortUtils
+import           Test.Tasty
+import           Test.Tasty.HUnit
 
-rankSort :: Pool -> Fronts
-rankSort = undefined
+tests = testGroup "RankSort" [unitTests]
 
-
-binSearch :: Ind -> Fronts -> Int
-binSearch = undefined
-
-dominates :: Ind -> Ind -> Bool
-ind_a `dominates` ind_b = undefined
-
-
-domByFront :: Ind -> Pool -> Bool
-ind `domByFront` front = undefined
+unitTests = testGroup "Unit tests"
+  [
+  ]

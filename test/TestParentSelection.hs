@@ -1,17 +1,20 @@
 module TestParentSelection (
-
+  tests
 ) where
 
-
-import qualified Data.Vector   as V
-import           Prelude       as P
-import           System.Random
-
+import           Control.Monad.ST
+import qualified Data.Vector         as V
+import qualified Data.Vector.Unboxed as VU
+import           GeneticOps
 import           Genome
-import           RandUtils
-import           SortUtils     (indCmpCrowded)
+import           Load
+import           Population
+import           SortUtils
+import           Test.Tasty
+import           Test.Tasty.HUnit
 
+tests = testGroup "RankSort" [unitTests]
 
--- No replacement
-tournamentSelect :: (RandomGen g) => Pool -> Int -> g-> (Pool, g)
-tournamentSelect = undefined
+unitTests = testGroup "Unit tests"
+  [
+  ]

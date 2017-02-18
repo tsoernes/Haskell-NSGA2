@@ -13,8 +13,8 @@ data DSPath = DSPath
 
 
 data DataSet = DataSet
-  { cost :: V.Vector (V.Vector Double)
-  , dist :: V.Vector (V.Vector Double)
+  { cost :: V.Vector (V.Vector Float)
+  , dist :: V.Vector (V.Vector Float)
   }
 
 
@@ -36,7 +36,7 @@ loadDS = do
   return $ DataSet (format cost') (format dist')
 
 
-format :: String -> V.Vector (V.Vector Double)
+format :: String -> V.Vector (V.Vector Float)
 format li =
   mirror asvec
     where

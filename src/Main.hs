@@ -18,7 +18,7 @@ module Main (
 ) where
 
 
-import           System.Random
+import           Data.Vector as V
 
 import           Genome
 import           Load
@@ -26,7 +26,6 @@ import           Population
 
 main :: IO ()
 main = do
-  g <- getStdGen
   ds <- loadDS
   let eap = eaPreset1
   (c, a) <- eaRunner ds eap
@@ -44,4 +43,6 @@ eaPreset1 = EAProblem
   , tournSize     = 2
   , mutationRate  = 0.05
   , crossoverRate = 0.80
+  , strictlyBetterCmp = V.fromList [(<)::Fitness->Fitness->Bool, (<)]
+  , noWorseCmp = V.fromList [(<=)::Fitness->Fitness->Bool, (<=)]
   }

@@ -55,8 +55,13 @@ orderedCrossoverStat (left, right) parent_a parent_b = (child_a, child_b)
       -- appear starting from the right of the slice looping around to the left
       c_a_miss = V.filter (`V.notElem` c_a_mid) (V.drop right parent_b V.++ V.take right parent_b)
       c_b_miss = V.filter (`V.notElem` c_b_mid) (V.drop right parent_a V.++ V.take right parent_a)
-      splitpos = (V.length parent_a) - right
+      splitpos = (V.length parent_a) - right -- number of elements to the right of the slice
       (ra, la) = V.splitAt splitpos c_a_miss
       (rb, lb) = V.splitAt splitpos c_b_miss
+      -- When finding missing genes from the opposite parent, it's necessary
+      -- to know if the missing genes came from the right side or the left
+      -- side of the slice. That's why the parent is swapped left and
+      -- right at the right end of the slice position before filtering.
+      -- Before adding the genes to the child they need to be swapped back
       child_a = la V.++ c_a_mid V.++ ra
       child_b = lb V.++ c_b_mid V.++ rb
