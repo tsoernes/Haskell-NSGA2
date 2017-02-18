@@ -34,7 +34,7 @@ executable nsga
         Population,
         Rubbish,
         Test
-    ghc-options: -ferror-spans -Wall -fno-warn-unused-binds -fno-warn-unused-matches -Wunused-top-binds -g
+    ghc-options: -ferror-spans -Wall -fno-warn-unused-binds -fno-warn-unused-matches -Wunused-top-binds -g -fsimpl-tick-factor=200
 
 test-suite test-nsga
     type: exitcode-stdio-1.0
@@ -45,8 +45,8 @@ test-suite test-nsga
         -- test-framework -any,
         -- test-framework-hunit -any,
         tasty,
-        vector-algorithms -any,
         tasty-hunit,
+        vector-algorithms -any,
         base -any,
         doctest -any,
         vector -any,
@@ -66,5 +66,16 @@ test-suite test-nsga
         TestParentSelection,
         TestRandUtils,
         TestLoad,
-        TestPopulation
-    ghc-options: -ferror-spans
+        TestPopulation,
+
+        AdultSelection,
+        CrowdDist,
+        GeneticOps,
+        Genome,
+        Load,
+        ParentSelection,
+        Population,
+        RandUtils,
+        RankSort,
+        SortUtils
+    ghc-options: -ferror-spans -fsimpl-tick-factor=200

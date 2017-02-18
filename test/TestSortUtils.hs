@@ -27,4 +27,6 @@ unitTests = testGroup "Unit tests"
       pool <- pool1
       let cmp = indCmpFit 0
       assertEqual "Sort once equals sort twice"  (sortPool pool cmp) (sortPool (sortPool pool cmp) cmp)
+      -- May fail in very rare cases if the randomly generated pool is already sorted
+      assertBool "Sort once does not equal unsorted" ((sortPool pool cmp) /= pool)
   ]

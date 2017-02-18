@@ -1,5 +1,5 @@
 module SortUtils (
-  sortPool, indCmpFit, indCmpCrowded, indCmpReverseDist
+  unsafeSortPool, sortPool, indCmpFit, indCmpCrowded, indCmpReverseDist
 ) where
 
 import           Control.Monad.ST
@@ -15,14 +15,24 @@ type IndCmp =
   Ind -> Ind -> Ordering
 
 
--- Sort a pool of individuals with the given comparator
-sortPool :: Pool-> IndCmp -> Pool
-sortPool pool cmp =
+-- Sort a pool of individuals with the given comparator in place.
+-- Unsafe version that modifies the input vector
+unsafeSortPool :: Pool-> IndCmp -> Pool
+unsafeSortPool pool cmp =
   runST $ do
     v <- V.unsafeThaw pool
     VA.sortBy cmp v
     V.unsafeFreeze v
 
+
+-- Sort a pool of individuals with the given comparator in place.
+-- Unsafe version that modifies the input vector
+sortPool :: Pool-> IndCmp -> Pool
+sortPool pool cmp =
+  runST $ do
+    v <- V.thaw pool
+    VA.sortBy cmp v
+    V.unsafeFreeze v
 
 -- Compare two individuals each with two fitnesses by increasing order of fitIdx
 -- and for individuals with equal fitIdx, with increasing order of the other fitness
