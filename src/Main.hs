@@ -35,6 +35,7 @@ main = do
   print $ showRanks a
 
 
+-- Travelling salesman preset
 eaPreset1 :: EAProblem
 eaPreset1 = EAProblem
   { nGenerations = 100
